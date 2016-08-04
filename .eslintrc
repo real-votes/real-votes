@@ -15,6 +15,10 @@
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
     "import/order": ["error", {
       "newlines-between": "always"
+    }],
+    "object-curly-newline": ["error", {
+      "multiline": true,
+      "minProperties": 1
     }]
   }
 }

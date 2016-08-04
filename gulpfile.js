@@ -51,18 +51,24 @@ gulp.task('pre-test', () => (
 
 gulp.task('test', ['pre-test'], () => {
   process.env.SECRET = 'THIS IS A BAD SECRET';
-  return gulp.src(testFiles, { read: false })
+  return gulp.src(testFiles, {
+    read: false,
+  })
     .pipe(mocha({
       reporter: 'spec',
     }))
     .pipe(istanbul.writeReports())
-    .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }))
+    .pipe(istanbul.enforceThresholds({
+      thresholds: {
+        global: 90,
+      },
+    }))
     .once('error', () => {
       process.exit(1);
     })
     .once('end', () => {
       process.exit();
-    })
+    });
 });
 
 gulp.task('test:watch', ['test'], () => {
