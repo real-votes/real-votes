@@ -21,5 +21,8 @@
     "gulp-nodemon": "^2.1.0",
     "istanbul": "^0.4.4",
     "mocha": "^2.5.3"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
   }
 }
