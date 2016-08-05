@@ -24,12 +24,12 @@ const PollSchema = new mongoose.Schema({
   votes: [{
     phoneNumber: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
     },
     vote: {
       type: String,
-      required: true,
+      // required: true,
     },
   }],
 });

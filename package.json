@@ -20,9 +20,11 @@
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.1.0",
     "istanbul": "^0.4.4",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "morgan": "^1.7.0"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "mongoose": "^4.5.8"
   }
