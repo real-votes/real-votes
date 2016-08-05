@@ -2,6 +2,8 @@
 
 const mongoose = require('mongoose');
 
+const voteSchema = require('./vote');
+
 const PollSchema = new mongoose.Schema({
   pollName: {
     type: String,
@@ -21,17 +23,7 @@ const PollSchema = new mongoose.Schema({
     type: String,
     required: true,
   }],
-  votes: [{
-    phoneNumber: {
-      type: String,
-      // required: true,
-      unique: true,
-    },
-    vote: {
-      type: String,
-      // required: true,
-    },
-  }],
+  votes: [voteSchema],
 });
 
-module.exports = exports = mongoose.model('Poll', PollSchema);
+module.exports = mongoose.model('Poll', PollSchema);
