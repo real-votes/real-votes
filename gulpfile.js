@@ -6,7 +6,7 @@ const mocha = require('gulp-mocha');
 const nodemon = require('gulp-nodemon');
 const istanbul = require('gulp-istanbul');
 
-const srcFiles = ['lib/**/*.js'];
+const srcFiles = ['lib/**/*.js', 'model/**/*.js', 'route/**/*.js'];
 const testFiles = ['test/**/*.js', 'gulpfile.js'];
 
 const eslintRules = JSON.parse(fs.readFileSync('./.eslintrc'));
@@ -21,9 +21,7 @@ gulp.task('lint:src', () => (
 
 gulp.task('lint:test', () => (
   gulp.src(testFiles)
-    .pipe(eslint(Object.assign(eslintRules, {
-      envs: ['node', 'es6', 'mocha'],
-    })))
+    .pipe(eslint(Object.assign(eslintRules, { envs: ['node', 'es6', 'mocha'] })))
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
 ));
@@ -51,18 +49,10 @@ gulp.task('pre-test', () => (
 
 gulp.task('test', ['pre-test'], () => {
   process.env.SECRET = 'THIS IS A BAD SECRET';
-  return gulp.src(testFiles, {
-    read: false,
-  })
-    .pipe(mocha({
-      reporter: 'spec',
-    }))
+  return gulp.src(testFiles, { read: false })
+    .pipe(mocha({ reporter: 'spec' }))
     .pipe(istanbul.writeReports())
-    .pipe(istanbul.enforceThresholds({
-      thresholds: {
-        global: 90,
-      },
-    }))
+    .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }))
     .once('error', () => {
       process.exit(1);
     })
@@ -80,9 +70,7 @@ gulp.task('test:watch', ['test'], () => {
 
 // Server tasks -------------------------------------------
 gulp.task('start', ['lint', 'test'], () => {
-  nodemon({
-    script: './lib/index.js',
-  });
+  nodemon({ script: './lib/index.js' });
 });
 
 gulp.task('default', ['lint', 'test']);

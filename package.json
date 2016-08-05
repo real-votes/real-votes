@@ -24,6 +24,7 @@
     "morgan": "^1.7.0"
   },
   "dependencies": {
+    "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "mongoose": "^4.5.8"

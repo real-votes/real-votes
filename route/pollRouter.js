@@ -5,8 +5,7 @@ const express = require('express');
 
 const Poll = require('../model/poll');
 
-const pollRouter = module.exports = exports = express.Router();
-
+const pollRouter = module.exports = exports = express.Router(); // eslint-disable-line
 
 pollRouter.post('/', jsonParser, (req, res, next) => {
   const newPoll = new Poll(req.body);
@@ -18,7 +17,7 @@ pollRouter.post('/', jsonParser, (req, res, next) => {
 
 pollRouter.get('/:id', (req, res, next) => {
   const _id = req.params.id;
-  Poll.findOne({_id}, (err, poll) => {
+  Poll.findOne({ _id }, (err, poll) => {
     if (err) return next(err);
     return res.json(poll);
   });

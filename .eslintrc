@@ -12,13 +12,13 @@
     ],
     "space-before-function-paren": ["error", "never"],
     "prefer-rest-params": 0,
-    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+    "no-underscore-dangle": 0,
     "import/order": ["error", {
       "newlines-between": "always"
     }],
     "object-curly-newline": ["error", {
       "multiline": true,
-      "minProperties": 1
+      "minProperties": 2
     }]
   }
 }
