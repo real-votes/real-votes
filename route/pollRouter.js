@@ -5,7 +5,9 @@ const express = require('express');
 
 const Poll = require('../model/poll');
 
-const pollRouter = module.exports = exports = express.Router(); // eslint-disable-line
+const voteRouter = require('./voteRouter');
+
+const pollRouter = module.exports = express.Router(); // eslint-disable-line
 
 pollRouter.post('/', jsonParser, (req, res, next) => {
   const newPoll = new Poll(req.body);
@@ -35,3 +37,5 @@ pollRouter.get('/sms_callback', (req, res, next) => {
   res.status(200).end();
   next();
 });
+
+pollRouter.use('/:pollId/vote', voteRouter);
