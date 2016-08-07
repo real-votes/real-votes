@@ -27,4 +27,9 @@ const PollSchema = new mongoose.Schema({
   votes: [voteSchema],
 });
 
+PollSchema.methods.updateChoices = function(choices) {
+  this.choices = choices;
+  return this.save();
+};
+
 module.exports = mongoose.model('Poll', PollSchema);
