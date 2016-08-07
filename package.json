@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "gulp test",
-    "lint": "gulp lint"
+    "lint": "gulp lint",
+    "start": "node ./lib/index.js"
   },
   "author": "Gio d'Amelio",
   "license": "MIT",
