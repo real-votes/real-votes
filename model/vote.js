@@ -7,7 +7,7 @@ const voteSchema = new mongoose.Schema({
     required: true,
     unique: true,
     sparse: true,
-    index: true,
+    // index: true,
   },
   vote: {
     type: String,
