@@ -1,4 +1,5 @@
 const express = require('express');
+const twilio = require('twilio');
 
 const Poll = require('../model/poll');
 
@@ -16,16 +17,19 @@ voteRouter.get('/sms_callback', (req, res, next) => {
     },
     { new: true }
   )
-  .then((updated) => {
-    console.log(updated);
+  .then((newVote) => {
+    const response = new twilio.TwimlResponse();
+
+    res
+      .status(200)
+      .set('Content-Type', 'application/xml')
+      .end(response.toString());
+
+    next();
   })
   .catch((err) => {
     console.log(err);
   });
-
-  console.log(req.query);
-  res.status(200).end();
-  next();
 });
 
 module.exports = voteRouter;
