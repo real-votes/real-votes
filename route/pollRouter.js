@@ -5,13 +5,19 @@ const express = require('express');
 const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
+const auth = require('../lib/auth');
 
 const pollRouter = module.exports = express.Router(); // eslint-disable-line
 
-pollRouter.post('/', jsonParser, (req, res, next) => {
+pollRouter.post('/', jsonParser, auth, (req, res, next) => {
   // TODO: dissallow creating polls with any status expect not_started
   const newPoll = new Poll(req.body);
-  newPoll.save((err, poll) => {
+
+  if (newPoll.pollStatus !== 'not_started') {
+    return next(httpError(400, 'must set to poll status to \'not_started\''));
+  }
+
+  return newPoll.save((err, poll) => {
     if (err) return next(err);
     return res.json(poll);
   });
@@ -32,7 +38,7 @@ pollRouter.get('/', (req, res, next) => {
   });
 });
 
-pollRouter.put('/:id', jsonParser, (req, res, next) => {
+pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
   const _id = req.params.id;
   if (!_id) {
     return next(httpError(400, 'id not specified'));
@@ -53,16 +59,3 @@ pollRouter.put('/:id', jsonParser, (req, res, next) => {
   }
   return console.log('what dude');
 });
-
-/*
-Poll.findOneAndUpdate({ pollStatus: 'in_progress' },
-  {
-    $push: {
-      votes: {
-        phoneNumber: req.query.From,
-        vote: req.query.Body,
-      },
-    },
-  },
-  { new: true }
-)*/
