@@ -21,12 +21,16 @@
     "gulp-nodemon": "^2.1.0",
     "istanbul": "^0.4.4",
     "mocha": "^2.5.3",
-    "morgan": "^1.7.0"
+    "morgan": "^1.7.0",
+    "supertest": "^2.0.0",
+    "supertest-as-promised": "^3.2.0"
   },
   "dependencies": {
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "debug": "^2.2.0",
     "express": "^4.14.0",
-    "mongoose": "^4.5.8"
+    "mongoose": "^4.5.8",
+    "twilio": "^2.9.1"
   }
 }
