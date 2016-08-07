@@ -18,6 +18,7 @@ const PollSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['not_started', 'in_progress', 'completed'],
+    default: 'not_started',
   },
   choices: [{
     type: String,

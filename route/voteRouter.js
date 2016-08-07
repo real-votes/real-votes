@@ -1,25 +1,31 @@
-'use strict';
-
-const jsonParser = require('body-parser').json();
 const express = require('express');
 
 const Poll = require('../model/poll');
 
-const pollRouter = require('./pollRouter');
+const voteRouter = new express.Router();
 
-const voteRouter = module.exports = express.Router({ mergeParams: true }); // eslint-disable-line
-
-voteRouter.get('/', (req, res, next) => {
-  Poll.findOne({}, null, { sort: { createdAt: 'desc' } })
-  .then((currentPoll) => {
-    // TODO: check if poll is in progress
-    if (!currentPoll) {
-      return next(new Error('no poll'));
-    }
+voteRouter.get('/sms_callback', (req, res, next) => {
+  Poll.findOneAndUpdate({ pollStatus: 'in_progress' },
+    {
+      $push: {
+        votes: {
+          phoneNumber: req.query.From,
+          vote: req.query.Body,
+        },
+      },
+    },
+    { new: true }
+  )
+  .then((updated) => {
+    console.log(updated);
   })
-  .catch(err => next(err));
-  // newPoll.save((err, poll) => {
-  //   if (err) return next(err);
-  //   return res.json(poll);
-  // });
+  .catch((err) => {
+    console.log(err);
+  });
+
+  console.log(req.query);
+  res.status(200).end();
+  next();
 });
+
+module.exports = voteRouter;
