@@ -2,6 +2,7 @@
 
 const jsonParser = require('body-parser').json();
 const express = require('express');
+const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
 
@@ -28,5 +29,16 @@ pollRouter.get('/', (req, res, next) => {
   Poll.find({}, (err, polls) => {
     if (err) return next(err);
     return res.json(polls);
+  });
+});
+
+pollRouter.put('/:id', jsonParser, (req, res, next) => {
+  const _id = req.params.id;
+  if (!_id) {
+    return next(httpError())
+  }
+  Poll.findOne({ _id }, (err, poll) => {
+    if (err) return next(err);
+    return res.json(poll);
   });
 });

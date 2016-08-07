@@ -18,14 +18,14 @@ voteRouter.get('/sms_callback', (req, res, next) => {
     },
     { new: true }
   )
-  .then((newVote) => {
+  .then(() => {
     debug(`Creating new vote from ${req.query.From} of ${req.query.Body}`);
     const response = new twilio.TwimlResponse();
 
     res
-      .status(200)
-      .set('Content-Type', 'application/xml')
-      .end(response.toString());
+    .status(200)
+    .set('Content-Type', 'application/xml')
+    .end(response.toString());
 
     next();
   })
