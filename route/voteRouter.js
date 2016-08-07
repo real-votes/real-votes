@@ -1,5 +1,6 @@
 const express = require('express');
 const twilio = require('twilio');
+const debug = require('debug')('rv:vote-router');
 
 const Poll = require('../model/poll');
 
@@ -18,6 +19,7 @@ voteRouter.get('/sms_callback', (req, res, next) => {
     { new: true }
   )
   .then((newVote) => {
+    debug(`Creating new vote from ${req.query.From} of ${req.query.Body}`);
     const response = new twilio.TwimlResponse();
 
     res
