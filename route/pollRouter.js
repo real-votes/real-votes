@@ -57,5 +57,11 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
       .catch(err => next(err));
     });
   }
+
+  if (req.body.pollStatus === 'completed') {
+    return Poll.findByIdAndUpdate(_id, req.body, { new: true })
+    .then(poll => res.json(poll))
+    .catch(err => next(err));
+  }
   return console.log('what dude');
 });
