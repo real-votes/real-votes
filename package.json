@@ -8,7 +8,12 @@
     "lint": "gulp lint",
     "start": "node ./lib/index.js"
   },
-  "author": "Gio d'Amelio",
+  "author": [
+    "Gio d'Amelio",
+    "Jeff Gebhardt",
+    "Vien Ly",
+    "Marshall Miller"
+  ],
   "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
@@ -27,14 +32,15 @@
   },
   "dependencies": {
     "basicauth-middleware": "^1.1.0",
-    "bcrypt": "^0.8.7",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
     "debug": "^2.2.0",
     "express": "^4.14.0",
     "http-errors": "^1.5.0",
+    "inquirer": "^1.1.2",
     "mongoose": "^4.5.8",
     "morgan": "^1.7.0",
+    "request": "^2.74.0",
     "twilio": "^2.9.1"
   }
 }

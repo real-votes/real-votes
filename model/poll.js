@@ -23,6 +23,7 @@ const PollSchema = new mongoose.Schema({
   votesPerUser: {
     type: Number,
     required: true,
+    default: 1,
   },
 });
 
