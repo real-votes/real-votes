@@ -46,6 +46,7 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       user.save()
       .then(() => {
         const response = new twilio.TwimlResponse();
+        response.message('nice vote!');
 
         res
         .status(200)
