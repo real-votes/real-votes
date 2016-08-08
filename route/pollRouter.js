@@ -6,6 +6,7 @@ const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
 const auth = require('../lib/auth');
+const tallyVotes = require('../lib/voteTalley');
 
 const pollRouter = module.exports = express.Router(); // eslint-disable-line
 
@@ -60,7 +61,10 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
 
   if (req.body.pollStatus === 'completed') {
     return Poll.findByIdAndUpdate(_id, req.body, { new: true })
-    .then(poll => res.json(poll))
+    .then((poll) => {
+      tallyVotes(poll);
+      res.json(poll);
+    })
     .catch(err => next(err));
   }
   return console.log('what dude');
