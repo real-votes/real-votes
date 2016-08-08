@@ -15,68 +15,49 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       return next(httpError(404, 'no poll currently in progress'));
     }
 
-    const activePoll = poll._id;
+    const activePollId = poll._id;
 
-    poll.choices.forEach((choice) => {
-      if (!req.query.Body.match(new RegExp(choice, 'gi')).length) {
-        return next(httpError(400, 'no such poll choice'));
-      }
-    });
+    if (!poll.choices.some((choice) => choice.toLowerCase() === req.query.Body.toLowerCase())) {
+      return next(httpError(400, 'no such choice'));
+    }
 
     const userNumber = req.query.From;
 
     User.findOne({
       phoneNumber: userNumber,
-      pollId: activePoll,
+      pollId: activePollId,
     })
     .then((user) => {
       if (!user) {
-        let newUser = new User();
-        newUser.phoneNumber = userNumber;
-        newUser.pollId = activePoll;
-        newUser.vote = [];
-        newUser.vote.push(req.query.Body);
-        newUser.save()
-        .then(savedUser => res.json(savedUser))
-        .catch(err => next(err));
+        user = new User();
+        user.phoneNumber = userNumber;
+        user.pollId = activePollId;
+        user.vote = [];
       }
 
+      // if user already exists
       if (user.vote.length >= poll.votesPerUser) {
         return next(httpError(400, 'no more votes allowed'));
       }
 
-      user.vote.push(req.query.Body).save()
-      .then(saved => res.json(saved))
+      debug(`Creating new vote from ${req.query.From} of ${req.query.Body}`);
+
+      user.vote.push(req.query.Body.toLowerCase());
+      user.save()
+      .then(() => {
+        const response = new twilio.TwimlResponse();
+
+        res
+        .status(200)
+        .set('Content-Type', 'application/xml')
+        .end(response.toString());
+        next();
+      })
       .catch(err => next(err));
     })
     .catch(err => next(err));
   })
   .catch(err => next(err));
-  // Poll.findOneAndUpdate({ pollStatus: 'in_progress' },
-  //   {
-  //     $push: {
-  //       votes: {
-  //         phoneNumber: req.query.From,
-  //         vote: req.query.Body,
-  //       },
-  //     },
-  //   },
-  //   { new: true }
-  // )
-  // .then(() => {
-  //   debug(`Creating new vote from ${req.query.From} of ${req.query.Body}`);
-  //   const response = new twilio.TwimlResponse();
-  //
-  //   res
-  //   .status(200)
-  //   .set('Content-Type', 'application/xml')
-  //   .end(response.toString());
-  //
-  //   next();
-  // })
-  // .catch((err) => {
-  //   console.log(err);
-  // });
 });
 
 module.exports = voteRouter;
