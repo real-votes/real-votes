@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const User = require('./user');
+
 const PollSchema = new mongoose.Schema({
   pollName: {
     type: String,
@@ -25,5 +27,16 @@ const PollSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+PollSchema.methods.removePoll = function() {
+  const self = this;
+  User.find({ pollId: this._id }).remove()
+  .then(() => {
+    self.remove();
+  })
+  .catch(err => {
+    throw err;
+  });
+};
 
 module.exports = mongoose.model('Poll', PollSchema);
