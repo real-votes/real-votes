@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 'use strict';
 
-const program = require('inquirer');
 const request = require('request');
 const vorpal = require('vorpal');
+const prettyjson = require('prettyjson');
 
-const addPollBaseUrl = 'https://real-votes.herokuapp.com/api/poll';
-const addPollBaseUrlTest = 'http://localhost:3141/api/poll';
+// const PollBaseUrl = 'https://real-votes.herokuapp.com/api/poll';
+const PollBaseUrlTest = 'http://localhost:3141/api/poll';
 
 console.log('Hello welcome to the real-votes admin console.');
 
@@ -21,10 +21,24 @@ cli
         name: 'pollName',
         message: 'What would you like to name your poll? ',
       },
+      {
+        type: 'input',
+        name: 'choices',
+        message: 'Please enter your choices for this poll: ',
+      },
+      {
+        type: 'input',
+        name: 'votesPerUser',
+        message: 'Please enter your max votes for this poll: ',
+      },
     ], (answers) => {
       const options = {
-        url: addPollBaseUrlTest,
-        json: { pollName: answers.pollName },
+        url: PollBaseUrlTest,
+        json: {
+          pollName: answers.pollName,
+          choices: [answers.choices],
+          votesPerUser: answers.votesPerUser,
+        },
         auth: {
           username: 'admin',
           password: process.env.PASSWORD,
@@ -32,7 +46,7 @@ cli
       };
 
       request.post(options, (err) => {
-        if (err) return console.log(err);
+        if (err) return this.log(err);
         this.log('Success!');
         callback();
       });
@@ -42,9 +56,20 @@ cli
 cli
   .command('updatePollStatus', 'Updates the status of a poll')
   .action(function(args, callback) {
-    callback();
   });
 
 cli
-  .delimiter('real-votes$ ')
+  .command('viewAllPolls', 'Shows all polls')
+  .action(function(args, callback) {
+    request.get(PollBaseUrlTest, (err, res, body) => {
+      if (err) return this.log(err);
+      // const testObj = {test:'test data'};
+      this.log(prettyjson.render(JSON.parse(body)));
+      callback();
+    });
+  });
+
+
+cli
+  .delimiter('real-votes-admin$ ')
   .show();
