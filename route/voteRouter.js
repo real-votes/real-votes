@@ -15,6 +15,8 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       return next(httpError(404, 'no poll currently in progress'));
     }
 
+    const activePoll = poll._id;
+
     poll.choices.forEach((choice) => {
       if (!req.query.Body.match(new RegExp(choice, 'gi')).length) {
         return next(httpError(400, 'no such poll choice'));
@@ -23,11 +25,15 @@ voteRouter.get('/sms_callback', (req, res, next) => {
 
     const userNumber = req.query.From;
 
-    User.findOne({ phoneNumber: userNumber })
+    User.findOne({
+      phoneNumber: userNumber,
+      pollId: activePoll,
+    })
     .then((user) => {
       if (!user) {
         let newUser = new User();
         newUser.phoneNumber = userNumber;
+        newUser.pollId = activePoll;
         newUser.vote = [];
         newUser.vote.push(req.query.Body);
         newUser.save()

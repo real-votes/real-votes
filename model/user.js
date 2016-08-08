@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  pollId: { type: mongoose.Schema.ObjectId },
   vote: [String],
 });
 
