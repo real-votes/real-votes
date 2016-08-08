@@ -4,9 +4,17 @@
 const request = require('request');
 const vorpal = require('vorpal');
 const prettyjson = require('prettyjson');
+const mongoose = require('mongoose');
+
+const User = require('../model/user');
+
+const mongoServer = process.env.MONGODB_URI || 'mongodb://localhost/pollDatabase';
+mongoose.connect(mongoServer);
+
+
 
 // const PollBaseUrl = 'https://real-votes.herokuapp.com/api/poll';
-const PollBaseUrlTest = 'http://localhost:3141/api/poll';
+const PollBaseUrlTest = 'http://localhost:3141/api/poll/';
 
 console.log('Hello welcome to the real-votes admin console.');
 
@@ -36,7 +44,7 @@ cli
         url: PollBaseUrlTest,
         json: {
           pollName: answers.pollName,
-          choices: [answers.choices],
+          choices: answers.choices.split(','),
           votesPerUser: answers.votesPerUser,
         },
         auth: {
@@ -56,6 +64,62 @@ cli
 cli
   .command('updatePollStatus', 'Updates the status of a poll')
   .action(function(args, callback) {
+    this.prompt([
+      {
+        type: 'input',
+        name: 'id',
+        message: 'Please enter the polls id you want to update: ',
+      },
+      {
+        type: 'input',
+        name: 'pollStatus',
+        message: 'Please enter the status you want to set: ',
+      },
+    ], (answers) => {
+      const options = {
+        url: PollBaseUrlTest + answers.id,
+        json: { pollStatus: answers.pollStatus },
+        auth: {
+          username: 'admin',
+          password: process.env.PASSWORD,
+        },
+      };
+
+      request.put(options, (err) => {
+        if (err) return this.log(err);
+        this.log('Success!');
+        callback();
+      });
+    });
+  });
+
+cli
+  .command('addTestVote', 'Adds a test vote to specified poll')
+  .action(function(args, callback) {
+    this.prompt([
+      {
+        type: 'input',
+        name: 'pollId',
+        message: 'Please enter the polls id you want to update: ',
+      },
+      {
+        type: 'input',
+        name: 'userNumber',
+        message: 'Please enter the phone number you want to use: ',
+      },
+      {
+        type: 'input',
+        name: 'vote',
+        message: 'Please enter your vote: ',
+      },
+    ], (answers) => {
+      const user = new User();
+      user.phoneNumber = answers.userNumber;
+      user.pollId = answers.pollId;
+      user.vote = [answers.vote];
+      user.save();
+      callback();
+    });
   });
 
 cli
@@ -63,12 +127,10 @@ cli
   .action(function(args, callback) {
     request.get(PollBaseUrlTest, (err, res, body) => {
       if (err) return this.log(err);
-      // const testObj = {test:'test data'};
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
     });
   });
-
 
 cli
   .delimiter('real-votes-admin$ ')
