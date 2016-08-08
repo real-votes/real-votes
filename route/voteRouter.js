@@ -46,7 +46,7 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       user.save()
       .then(() => {
         const response = new twilio.TwimlResponse();
-        response.message('nice vote!');
+        response.message(`You've voted for ${req.query.Body.toLowerCase()}\nYou have ${poll.votesPerUser - user.vote.length} vote(s) left`);
 
         res
         .status(200)
