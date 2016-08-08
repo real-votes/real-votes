@@ -4,9 +4,11 @@
 const request = require('request');
 const vorpal = require('vorpal');
 const prettyjson = require('prettyjson');
+const Pie = require('cli-pie');
 
 // const PollBaseUrl = 'https://real-votes.herokuapp.com/api/poll';
-const PollBaseUrlTest = 'http://localhost:3141/api/poll';
+const PollBaseUrlTest = 'http://localhost:3141/api/poll/';
+const VoteBaseUrlTest = 'http://localhost:3141/api/vote/';
 
 console.log('Hello welcome to the real-votes admin console.');
 
@@ -69,6 +71,25 @@ cli
     });
   });
 
+cli
+  .command('showResults', 'Show the results of the current poll')
+  .action(function(args, callback) {
+    request.get(`${VoteBaseUrlTest}tally`, (err, res, body) => {
+      if (err) return this.log(err);
+      const results = JSON.parse(body);
+      const chart = new Pie(10, [], { legend: true });
+
+      Object.keys(results).forEach((key) => {
+        chart.add({
+          label: key,
+          value: results[key],
+        });
+      });
+
+      this.log(chart.toString());
+      callback();
+    });
+  });
 
 cli
   .delimiter('real-votes-admin$ ')

@@ -60,4 +60,27 @@ voteRouter.get('/sms_callback', (req, res, next) => {
   .catch(err => next(err));
 });
 
+voteRouter.get('/tally', (req, res, next) => {
+  debug('Tallying results');
+  Poll.findOne({ pollStatus: 'in_progress' })
+    .then((poll) => User.find({ pollId: poll._id }))
+    .then((users) => {
+      const results = users
+        .map((user) => user.vote) // Get just the votes
+        .reduce((a, b) => a.concat(b)) // Flatten the array
+        // Return a object with the individual vote counts
+        .reduce((acc, curr) => {
+          if (typeof acc[curr] === 'undefined') {
+            acc[curr] = 1;
+          } else {
+            acc[curr] += 1;
+          }
+          return acc;
+        }, {});
+
+      res.json(results);
+    })
+    .catch((err) => next(err));
+});
+
 module.exports = voteRouter;
