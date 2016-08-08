@@ -8,17 +8,28 @@ const User = require('../model/user');
 
 const voteRouter = new express.Router();
 
+function twilioRespond(message, res) {
+  const response = new twilio.TwimlResponse();
+  response.message(message);
+
+  res
+  .status(200)
+  .set('Content-Type', 'application/xml')
+  .end(response.toString());
+}
+
 voteRouter.get('/sms_callback', (req, res, next) => {
   Poll.findOne({ pollStatus: 'in_progress' })
   .then((poll) => {
     if (!poll) {
-      return next(httpError(404, 'no poll currently in progress'));
+      return twilioRespond('No poll is currently in progress', res);
+      // return next(httpError(404, 'no poll currently in progress'));
     }
 
     const activePollId = poll._id;
 
     if (!poll.choices.some((choice) => choice.toLowerCase() === req.query.Body.toLowerCase())) {
-      return next(httpError(400, 'no such choice'));
+      return twilioRespond(`Please select one these choices ${poll.choices.join(', ')}`, res);
     }
 
     const userNumber = req.query.From;
@@ -37,7 +48,7 @@ voteRouter.get('/sms_callback', (req, res, next) => {
 
       // if user already exists
       if (user.vote.length >= poll.votesPerUser) {
-        return next(httpError(400, 'no more votes allowed'));
+        return twilioRespond('You\'ve ran out of votes', res);
       }
 
       debug(`Creating new vote from ${req.query.From} of ${req.query.Body}`);
@@ -45,13 +56,8 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       user.vote.push(req.query.Body.toLowerCase());
       user.save()
       .then(() => {
-        const response = new twilio.TwimlResponse();
-        response.message(`You've voted for ${req.query.Body.toLowerCase()}\nYou have ${poll.votesPerUser - user.vote.length} vote(s) left`);
-
-        res
-        .status(200)
-        .set('Content-Type', 'application/xml')
-        .end(response.toString());
+        twilioRespond(`You've voted for ${req.query.Body.toLowerCase()}
+        You have ${poll.votesPerUser - user.vote.length} vote(s) left`, res);
         next();
       })
       .catch(err => next(err));
