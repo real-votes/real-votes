@@ -1,8 +1,4 @@
-'use strict';
-
 const mongoose = require('mongoose');
-
-const voteSchema = require('./vote');
 
 const PollSchema = new mongoose.Schema({
   pollName: {
@@ -24,12 +20,10 @@ const PollSchema = new mongoose.Schema({
     type: String,
     required: true,
   }],
-  votes: [voteSchema],
+  votesPerUser: {
+    type: Number,
+    required: true,
+  },
 });
-
-PollSchema.methods.updateChoices = function(choices) {
-  this.choices = choices;
-  return this.save();
-};
 
 module.exports = mongoose.model('Poll', PollSchema);
