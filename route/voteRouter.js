@@ -29,7 +29,7 @@ voteRouter.get('/sms_callback', (req, res, next) => {
     const activePollId = poll._id;
 
     if (!poll.choices.some((choice) => choice.toLowerCase() === req.query.Body.toLowerCase())) {
-      return twilioRespond(`Please select one these choices ${poll.choices.join(', ')}`, res);
+      return twilioRespond(`Please select one of these choices [${poll.choices.join(', ')}]`, res);
     }
 
     const userNumber = req.query.From;
@@ -56,8 +56,7 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       user.vote.push(req.query.Body.toLowerCase());
       user.save()
       .then(() => {
-        twilioRespond(`You've voted for ${req.query.Body.toLowerCase()}
-        You have ${poll.votesPerUser - user.vote.length} vote(s) left`, res);
+        twilioRespond(`You've voted for ${req.query.Body.toLowerCase()}\nYou have ${poll.votesPerUser - user.vote.length} vote(s) left`, res); // eslint-disable-line
         next();
       })
       .catch(err => next(err));
