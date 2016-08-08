@@ -1,5 +1,5 @@
 require('./testServer');
-require('./authenticationTest');
+require('./routerTests');
 
 const mongoose = require('mongoose');
 
