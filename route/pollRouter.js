@@ -49,6 +49,17 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
     return next(httpError(400, 'no body'));
   }
 
+  console.log(req.body);
+
+  // return Poll.findOne({ pollStatus: 'in_progress' })
+  // .then((poll) => {
+  //   if (poll) {
+  //     return next(httpError(400, 'a poll is already in progress'));
+  //   }
+  // })
+  // .catch(err => next(err));
+
+
   if (req.body.pollStatus === 'in_progress') {
     return Poll.find({ pollStatus: 'in_progress' })
     .then((polls) => {
@@ -67,5 +78,8 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
     })
     .catch(err => next(err));
   }
-  return console.log('what dude');
+
+  Poll.findByIdAndUpdate(_id, req.body, { new: true })
+  .then(poll => res.json(poll))
+  .catch(err => next(err));
 });
