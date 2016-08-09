@@ -45,6 +45,10 @@ function tallyVotes() {
     ));
 }
 
+function getPollInfo(poll) {
+  let pollInfo = `Currently running Poll:\n${poll.pollName}\nChoices available:[${poll.choices,join(', ')}]\nVotes Allowed Per User: ${poll.votesPerUser}`; // eslint-disable-line
+}
+
 voteRouter.get('/sms_callback', (req, res, next) => {
   Poll.findOne({ pollStatus: 'in_progress' })
   .then((poll) => {
@@ -54,6 +58,10 @@ voteRouter.get('/sms_callback', (req, res, next) => {
     }
 
     const activePollId = poll._id;
+
+    if (req.query.Body === '?') {
+      return twilioRespond(getPollInfo(poll), res);
+    }
 
     if (!poll.choices.some((choice) => choice.toLowerCase() === req.query.Body.toLowerCase())) {
       return twilioRespond(`Please select one of these choices [${poll.choices.join(', ')}]`, res);
