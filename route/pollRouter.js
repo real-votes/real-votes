@@ -83,3 +83,7 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
   .then(poll => res.json(poll))
   .catch(err => next(err));
 });
+
+pollRouter.delete('/:id', (req, res, next) => {
+  const _id = req.params._id;
+});
