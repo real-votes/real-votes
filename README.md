@@ -25,6 +25,12 @@ https://www.npmjs.com/package/real-votes-admin
 
 1. Clone down this repository.
 
-2. Enter the following command to install dependencies: `npm i`.
+2. Enter the following command to install dependencies:
 
-3. Start mongod: `mongod --dbpath db`
+  `npm i`.
+
+3. Start mongod:
+
+  `mongod --dbpath db`
+
+4. gulp test
