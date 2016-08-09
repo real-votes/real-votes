@@ -34,9 +34,6 @@ PollSchema.methods.removePoll = function() {
   return User.find({ pollId: this._id }).remove()
   .then(() => {
     self.remove();
-  })
-  .catch(err => {
-    throw err;
   });
 };
 
