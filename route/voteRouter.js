@@ -46,7 +46,7 @@ function tallyVotes() {
 }
 
 function getPollInfo(poll) {
-  let pollInfo = `Currently running Poll:\n${poll.pollName}\nChoices available:[${poll.choices,join(', ')}]\nVotes Allowed Per User: ${poll.votesPerUser}`; // eslint-disable-line
+  let pollInfo = `Currently running Poll:\n${poll.pollName}\nChoices available:[${poll.choices.join(', ')}]\nVotes Allowed Per User: ${poll.votesPerUser}`; // eslint-disable-line
   return pollInfo;
 }
 
