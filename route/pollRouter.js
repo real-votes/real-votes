@@ -90,8 +90,7 @@ pollRouter.delete('/:id', (req, res, next) => {
   if (!_id) {
     return next(httpError(400, 'no id specified'));
   }
-  Poll.findOneAndRemove({ _id }, (err) => {
-    if (err) return next(err);
-    res.json({ message: 'Deleted poll' });
-  });
+  Poll.findOne({ _id })
+  .then(poll => res.json(poll))
+  .catch(err => next(err));
 });
