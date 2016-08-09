@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+'use strict'; //eslint-disable-line
 
 const request = require('request');
 const vorpal = require('vorpal');
@@ -56,7 +56,10 @@ cli
       };
 
       request.post(options, (err) => {
-        if (err) return this.log(err);
+        if (err) {
+          this.log(err);
+          return callback();
+        }
         this.log('Success!');
         callback();
       });
@@ -88,12 +91,44 @@ cli
       };
 
       request.put(options, (err) => {
-        if (err) return this.log(err);
+        if (err) {
+          this.log(err);
+          return callback();
+        }
         this.log('Success!');
         callback();
       });
     });
   });
+
+cli
+    .command('deletePoll', 'deletes one poll')
+    .action(function(args, callback) {
+      this.prompt([
+        {
+          type: 'input',
+          name: 'id',
+          message: 'Please enter the polls id you want to delete: ',
+        },
+      ], (answers) => {
+        const options = {
+          url: PollBaseUrlTest + answers.id,
+          auth: {
+            username: 'admin',
+            password: process.env.PASSWORD,
+          },
+        };
+
+        request.delete(options, (err) => {
+          if (err) {
+            this.log(err);
+            return callback();
+          }
+          this.log('Success!');
+          callback();
+        });
+      });
+    });
 
 cli
   .command('addTestVote', 'Adds a test vote to specified poll')
@@ -128,7 +163,10 @@ cli
   .command('viewAllPolls', 'Shows all polls')
   .action(function(args, callback) {
     request.get(PollBaseUrlTest, (err, res, body) => {
-      if (err) return this.log(err);
+      if (err) {
+        this.log(err);
+        return callback();
+      }
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
     });
@@ -158,7 +196,10 @@ cli
   .command('showResults', 'Show the results of the current poll')
   .action(function(args, callback) {
     request.get(`${VoteBaseUrlTest}tally`, (err, res, body) => {
-      if (err) return this.log(err);
+      if (err) {
+        this.log(err);
+        return callback();
+      }
       const results = JSON.parse(body);
       this.log(renderTally(results));
       callback();
@@ -170,10 +211,13 @@ cli
     'showRealtimeResults',
     'Show the results of the current poll and keep them updated in real time'
   )
-  .action(function() {
+  .action(function(args, callback) {
     // Get the initial tally
     request.get(`${VoteBaseUrlTest}tally`, (err, res, body) => {
-      if (err) return this.log(err);
+      if (err) {
+        this.log(err);
+        return callback();
+      }
       const results = JSON.parse(body);
       process.stdout.write('\u001bc');
       this.log(renderTally(results));

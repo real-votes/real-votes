@@ -6,7 +6,6 @@ const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
 const auth = require('../lib/auth');
-const tallyVotes = require('../lib/voteTalley');
 
 const pollRouter = module.exports = express.Router(); // eslint-disable-line
 
@@ -73,7 +72,6 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
   if (req.body.pollStatus === 'completed') {
     return Poll.findByIdAndUpdate(_id, req.body, { new: true })
     .then((poll) => {
-      tallyVotes(poll);
       res.json(poll);
     })
     .catch(err => next(err));
@@ -84,15 +82,15 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
   .catch(err => next(err));
 });
 
-pollRouter.delete('/:id', (req, res, next) => {
-  const _id = req.params._id;
+pollRouter.delete('/:id', auth, (req, res, next) => {
+  const _id = req.params.id;
 
   if (!_id) {
     return next(httpError(400, 'no id specified'));
   }
   Poll.findOne({ _id })
   .then((poll) => {
-    if (!poll) return next(httpError(400, 'No poll found'));
+    if (!poll) return next(httpError(404, 'No poll found'));
     poll.removePoll()
     .then(() => {
       res.json({ message: 'Poll deleted.' });
