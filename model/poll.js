@@ -31,7 +31,7 @@ const PollSchema = new mongoose.Schema({
 
 PollSchema.methods.removePoll = function() {
   const self = this;
-  User.find({ pollId: this._id }).remove()
+  return User.find({ pollId: this._id }).remove()
   .then(() => {
     self.remove();
   })
