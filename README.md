@@ -23,14 +23,18 @@ https://www.npmjs.com/package/real-votes-admin
 
 #Tests
 
-1. Clone down this repository.
+1. Clone down this repository on github and in the command line write:
+
+  `git clone`
 
 2. Enter the following command to install dependencies:
 
-  `npm i`.
+  `npm i`
 
 3. Start mongod:
 
   `mongod --dbpath db`
 
-4. gulp test
+4. Run a gulp test on the command line in the root:
+
+  `gulp test`
