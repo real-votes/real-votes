@@ -1,9 +1,8 @@
-'use strict';
+'use strict'; // eslint-disable-line
 
 const express = require('express');
 const twilio = require('twilio');
 const debug = require('debug')('rv:vote-router');
-const httpError = require('http-errors');
 const ExpressSSE = require('express-sse');
 
 const Poll = require('../model/poll');
