@@ -1,3 +1,5 @@
+![real-votes](./resources/realVotesLogo.png)
+
 #real-votes
 
 Real time voting via SMS
