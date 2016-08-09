@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const twilio = require('twilio');
 const debug = require('debug')('rv:vote-router');
@@ -69,22 +71,26 @@ voteRouter.get('/sms_callback', (req, res, next) => {
 voteRouter.get('/tally', (req, res, next) => {
   debug('Tallying results');
   Poll.findOne({ pollStatus: 'in_progress' })
-    .then((poll) => User.find({ pollId: poll._id }))
-    .then((users) => {
-      const results = users
-        .map((user) => user.vote) // Get just the votes
-        .reduce((a, b) => a.concat(b)) // Flatten the array
-        // Return a object with the individual vote counts
-        .reduce((acc, curr) => {
-          if (typeof acc[curr] === 'undefined') {
-            acc[curr] = 1;
-          } else {
-            acc[curr] += 1;
-          }
-          return acc;
-        }, {});
-
-      res.json(results);
+    .then((poll) => {
+      User.find({ pollId: poll._id })
+        .then((users) => {
+          res.json({
+            seed: poll._id,
+            choices: poll.choices,
+            votes: users
+              .map((user) => user.vote) // Get just the votes
+              .reduce((a, b) => a.concat(b)) // Flatten the array
+              // Return a object with the individual vote counts
+              .reduce((acc, curr) => {
+                if (typeof acc[curr] === 'undefined') {
+                  acc[curr] = 1;
+                } else {
+                  acc[curr] += 1;
+                }
+                return acc;
+              }, {}),
+          });
+        });
     })
     .catch((err) => next(err));
 });

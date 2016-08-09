@@ -6,6 +6,7 @@ const vorpal = require('vorpal');
 const prettyjson = require('prettyjson');
 const Pie = require('cli-pie');
 const mongoose = require('mongoose');
+const randomcolor = require('randomcolor');
 
 const User = require('../model/user');
 
@@ -140,10 +141,17 @@ cli
       const results = JSON.parse(body);
       const chart = new Pie(10, [], { legend: true });
 
-      Object.keys(results).forEach((key) => {
+      const colorPalette = randomcolor({
+        format: 'rgbArray',
+        seed: results.seed,
+        count: results.choices.length,
+      });
+
+      results.choices.forEach((choice, index) => {
         chart.add({
-          label: key,
-          value: results[key],
+          label: choice,
+          value: results.votes[choice] || 0,
+          color: colorPalette[index],
         });
       });
 
