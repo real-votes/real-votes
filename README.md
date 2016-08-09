@@ -20,11 +20,37 @@ The real votes-admin-console can be found here:
 
 https://www.npmjs.com/package/real-votes-admin
 
+#How to use real-votes-admin
+
+1. npm install the package on the command line:
+
+  `npm i -g real-votes-admin`
+
+2. run the package:
+
+  `realvotesadmin`
+
+3. run the 'help' command:
+
+  `help`
+
+4. 'help' will print out a list of commands you can use to create, edit and delete polls. As well as displaying existing polls and their results in real time.
+
 
 #Tests
 
-1. Clone down this repository.
+1. Clone down this repository on github and in the command line write:
 
-2. Enter the following command to install dependencies: `npm i`.
+  `git clone`
 
-3. Start mongod: `mongod --dbpath db`
+2. Enter the following command to install dependencies:
+
+  `npm i`
+
+3. Start mongod:
+
+  `mongod --dbpath db`
+
+4. Run a gulp test on the command line in the root:
+
+  `gulp test`
