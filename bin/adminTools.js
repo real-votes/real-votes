@@ -7,6 +7,7 @@ const prettyjson = require('prettyjson');
 const Pie = require('cli-pie');
 const mongoose = require('mongoose');
 const randomcolor = require('randomcolor');
+const EventSource = require('eventsource');
 
 const User = require('../model/user');
 
@@ -133,31 +134,62 @@ cli
     });
   });
 
+function renderTally(results) {
+  const chart = new Pie(10, [], { legend: true });
+
+  const colorPalette = randomcolor({
+    format: 'rgbArray',
+    seed: results.seed,
+    count: results.choices.length,
+  });
+
+  results.choices.forEach((choice, index) => {
+    chart.add({
+      label: choice,
+      value: results.votes[choice] || 0,
+      color: colorPalette[index],
+    });
+  });
+
+  return chart.toString();
+}
+
 cli
   .command('showResults', 'Show the results of the current poll')
   .action(function(args, callback) {
     request.get(`${VoteBaseUrlTest}tally`, (err, res, body) => {
       if (err) return this.log(err);
       const results = JSON.parse(body);
-      const chart = new Pie(10, [], { legend: true });
-
-      const colorPalette = randomcolor({
-        format: 'rgbArray',
-        seed: results.seed,
-        count: results.choices.length,
-      });
-
-      results.choices.forEach((choice, index) => {
-        chart.add({
-          label: choice,
-          value: results.votes[choice] || 0,
-          color: colorPalette[index],
-        });
-      });
-
-      this.log(chart.toString());
+      this.log(renderTally(results));
       callback();
     });
+  });
+
+cli
+  .command(
+    'showRealtimeResults',
+    'Show the results of the current poll and keep them updated in real time'
+  )
+  .action(function() {
+    // Get the initial tally
+    request.get(`${VoteBaseUrlTest}tally`, (err, res, body) => {
+      if (err) return this.log(err);
+      const results = JSON.parse(body);
+      process.stdout.write('\u001bc');
+      this.log(renderTally(results));
+    });
+
+    // Subscribe to tally updates
+    const es = new EventSource(`${VoteBaseUrlTest}tally/stream`);
+
+    es.addEventListener('message', (e) => {
+      const data = JSON.parse(e.data);
+      if (data === 'heartbeat') return;
+
+      // Clear the console
+      process.stdout.write('\u001bc');
+      this.log(renderTally(JSON.parse(data)));
+    }, false);
   });
 
 cli

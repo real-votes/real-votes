@@ -4,11 +4,13 @@ const express = require('express');
 const twilio = require('twilio');
 const debug = require('debug')('rv:vote-router');
 const httpError = require('http-errors');
+const ExpressSSE = require('express-sse');
 
 const Poll = require('../model/poll');
 const User = require('../model/user');
 
 const voteRouter = new express.Router();
+const sse = new ExpressSSE();
 
 function twilioRespond(message, res) {
   const response = new twilio.TwimlResponse();
@@ -18,6 +20,29 @@ function twilioRespond(message, res) {
   .status(200)
   .set('Content-Type', 'application/xml')
   .end(response.toString());
+}
+
+function tallyVotes() {
+  return Poll.findOne({ pollStatus: 'in_progress' })
+    .then((poll) => (
+      User.find({ pollId: poll._id })
+        .then((users) => ({
+          seed: poll._id,
+          choices: poll.choices,
+          votes: users
+            .map((user) => user.vote) // Get just the votes
+            .reduce((a, b) => a.concat(b)) // Flatten the array
+            // Return a object with the individual vote counts
+            .reduce((acc, curr) => {
+              if (typeof acc[curr] === 'undefined') {
+                acc[curr] = 1;
+              } else {
+                acc[curr] += 1;
+              }
+              return acc;
+            }, {}),
+        }))
+    ));
 }
 
 voteRouter.get('/sms_callback', (req, res, next) => {
@@ -59,6 +84,10 @@ voteRouter.get('/sms_callback', (req, res, next) => {
       user.save()
       .then(() => {
         twilioRespond(`You've voted for ${req.query.Body.toLowerCase()}\nYou have ${poll.votesPerUser - user.vote.length} vote(s) left`, res); // eslint-disable-line
+        tallyVotes()
+          .then((tally) => {
+            sse.send(JSON.stringify(tally));
+          });
         next();
       })
       .catch(err => next(err));
@@ -70,29 +99,14 @@ voteRouter.get('/sms_callback', (req, res, next) => {
 
 voteRouter.get('/tally', (req, res, next) => {
   debug('Tallying results');
-  Poll.findOne({ pollStatus: 'in_progress' })
-    .then((poll) => {
-      User.find({ pollId: poll._id })
-        .then((users) => {
-          res.json({
-            seed: poll._id,
-            choices: poll.choices,
-            votes: users
-              .map((user) => user.vote) // Get just the votes
-              .reduce((a, b) => a.concat(b)) // Flatten the array
-              // Return a object with the individual vote counts
-              .reduce((acc, curr) => {
-                if (typeof acc[curr] === 'undefined') {
-                  acc[curr] = 1;
-                } else {
-                  acc[curr] += 1;
-                }
-                return acc;
-              }, {}),
-          });
-        });
-    })
+  tallyVotes()
+    .then((tally) => res.json(tally))
     .catch((err) => next(err));
 });
+
+voteRouter.get('/tally/stream', sse.init);
+
+// Send a heartbeat every second to keep heroku from timing out
+setInterval(() => sse.send('heartbeat'), 1000);
 
 module.exports = voteRouter;
