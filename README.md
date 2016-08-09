@@ -1,6 +1,7 @@
 ![real-votes](./resources/realVotesLogo.png)
 
 #real-votes
+![travis-status](https://travis-ci.org/real-votes/real-votes.svg)
 
 Real time voting via SMS
 
