@@ -51,7 +51,7 @@ describe('CRUD testing', () => {
     });
   });
 
-  it('should not post with a bad username and password', () => {
+  it('should not post with a bad username and password', (done) => {
     request(server)
     .post('/api/poll')
     .auth('hax0r', 'imahaxu')
@@ -60,6 +60,7 @@ describe('CRUD testing', () => {
       expect(err).to.eql(true);
       expect(res).to.eql(400);
       expect(res.body).to.eql(undefined);
+      done();
     });
   });
 
@@ -88,7 +89,7 @@ describe('CRUD testing', () => {
       });
   });
 
-  it('should delete a poll with specific id', () => {
+  it('should delete a poll with specific id', (done) => {
     request(server)
       .get('/api/poll')
       .end(() => {
@@ -98,6 +99,7 @@ describe('CRUD testing', () => {
           .end((err, res) => {
             expect(err).to.eql(null);
             expect(res).to.have.status(200);
+            done();
           });
       });
   });
