@@ -28,6 +28,16 @@ console.log(title('Hello, welcome to the real-votes admin console'));
 
 const cli = vorpal();
 
+function inputVer(promptInput) {
+  let badInput = false;
+  Object.keys(promptInput).forEach((key) => {
+    if (promptInput[key] === '') {
+      badInput = true;
+    }
+  });
+  return badInput;
+}
+
 cli
   .command('addPoll', 'Creates a new poll')
   .action(function(args, callback) {
@@ -48,6 +58,13 @@ cli
         message: blue('Please enter your max votes for this poll: '),
       },
     ], (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: PollBaseUrlTest,
         json: {
@@ -87,6 +104,13 @@ cli
         message: blue('Please enter the status you want to set: '),
       },
     ], (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: PollBaseUrlTest + answers.id,
         json: { pollStatus: answers.pollStatus },
@@ -117,6 +141,13 @@ cli
           message: blue('Please enter the polls ID you want to delete: '),
         },
       ], (answers) => {
+        const input = inputVer(answers);
+        console.log(input);
+        if (input === true) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         const options = {
           url: PollBaseUrlTest + answers.id,
           auth: {
@@ -156,6 +187,13 @@ cli
         message: blue('Please enter your vote: '),
       },
     ], (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const user = new User();
       user.phoneNumber = answers.userNumber;
       user.pollId = answers.pollId;
@@ -214,6 +252,13 @@ cli
       message: red('Are you sure you want to input all polls, \'y\' or \'n\': '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       if (answers.confirmation.toLowerCase() === 'n') return callback();
       const options = {
         url: PollBaseUrlTest,
@@ -243,6 +288,13 @@ cli
       message: red('Are you sure you want to delete all votes, \'y\' or \'n\': '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       if (answers.confirmation.toLowerCase() === 'n') return callback();
       const options = {
         url: VoteBaseUrlTest,
@@ -272,6 +324,13 @@ cli
       message: blue('Enter the ID of the Poll you want to view votes for: '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: `${PollBaseUrlTest}${answers.pollId}/users`,
         auth: {
@@ -300,6 +359,13 @@ cli
       message: blue('Enter the ID of the Poll you want to delete all votes for: '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      console.log(input);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: `${PollBaseUrlTest}${answers.pollId}/users`,
         auth: {
