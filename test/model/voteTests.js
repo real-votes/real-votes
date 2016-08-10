@@ -31,14 +31,26 @@ describe('CRUD testing', () => {
     done();
   });
 
-  it('should get existing votes', (done) => {
+  it('should delete all votes', (done) => {
     request(server)
-      .get('api/vote')
+      .delete('/api/vote')
+      .auth('admin', 'testpass')
       .end((err, res) => {
         expect(err).to.eql(null);
         expect(res).to.have.status(200);
-        expect(res.body[0].phoneNumber).to.eql(this.newUser.phoneNumber);
+        expect(res.body).to.eql({ message: 'All Votes deleted' })
         done();
       });
   });
+
+  // it('should get existing votes', (done) => {
+  //   request(server)
+  //     .get('api/vote')
+  //     .end((err, res) => {
+  //       expect(err).to.eql(null);
+  //       expect(res).to.have.status(200);
+  //       expect(res.body[0].phoneNumber).to.eql(this.newUser.phoneNumber);
+  //       done();
+  //     });
+  // });
 });
