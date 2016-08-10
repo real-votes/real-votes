@@ -59,7 +59,6 @@ cli
       },
     ], (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -78,11 +77,17 @@ cli
         },
       };
 
-      request.post(options, (err) => {
+      request.post(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully added poll!'));
         callback();
       });
@@ -105,7 +110,6 @@ cli
       },
     ], (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -120,11 +124,17 @@ cli
         },
       };
 
-      request.put(options, (err) => {
+      request.put(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully updated poll!'));
         callback();
       });
@@ -142,7 +152,6 @@ cli
         },
       ], (answers) => {
         const input = inputVer(answers);
-        console.log(input);
         if (input === true) {
           this.log(red('Invalid input, exiting command...'));
           return callback();
@@ -156,11 +165,17 @@ cli
           },
         };
 
-        request.delete(options, (err) => {
+        request.delete(options, (err, res) => {
           if (err) {
             this.log(err);
             return callback();
           }
+
+          if (res.statusCode !== 200) {
+            this.log(red('Invalid input, exiting command...'));
+            return callback();
+          }
+
           this.log(green('Successfully deleted poll!'));
           callback();
         });
@@ -188,7 +203,6 @@ cli
       },
     ], (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -218,6 +232,12 @@ cli
         this.log(err);
         return callback();
       }
+
+      if (res.statusCode !== 200) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
     });
@@ -238,6 +258,12 @@ cli
         this.log(err);
         return callback();
       }
+
+      if (res.statusCode !== 200) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
     });
@@ -253,7 +279,6 @@ cli
     },
     (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -268,11 +293,17 @@ cli
         },
       };
 
-      request.delete(options, (err) => {
+      request.delete(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully deleted all polls.'));
         callback();
       });
@@ -289,7 +320,6 @@ cli
     },
     (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -304,11 +334,17 @@ cli
         },
       };
 
-      request.delete(options, (err) => {
+      request.delete(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully deleted all votes.'));
         callback();
       });
@@ -325,7 +361,6 @@ cli
     },
     (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -344,6 +379,12 @@ cli
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(prettyjson.render(JSON.parse(body)));
         callback();
       });
@@ -360,7 +401,6 @@ cli
     },
     (answers) => {
       const input = inputVer(answers);
-      console.log(input);
       if (input === true) {
         this.log(red('Invalid input, exiting command...'));
         return callback();
@@ -379,6 +419,12 @@ cli
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(prettyjson.render(JSON.parse(body)));
         callback();
       });
@@ -419,7 +465,7 @@ cli
       }
 
       if (res.statusCode === 404) {
-        this.log(chalk.red.bold('There is no poll currently in progress'));
+        this.log(red('There is no poll currently in progress'));
         return callback();
       }
 
