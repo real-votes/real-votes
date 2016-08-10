@@ -11,23 +11,23 @@ const request = chai.request;
 process.env.MONGODB_URI = 'mongodb://localhost/votes-real-test';
 process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
-const Vote = require('../../model/vote');
+const User = require('../../model/user');
 require('./testHarness');
 
 describe('CRUD testing', () => {
   // let id = '';
   before(function(done) {
     // debugger;
-    this.newVote = new Vote({
+    this.newUser = new User({
       phoneNumber: '2063163233',
       vote: '1',
     });
-    // id = this.newVote._id;
+    // id = this.newUser._id;
     done();
   });
 
   after((done) => {
-    Vote.remove({});
+    User.remove({});
     done();
   });
 
@@ -37,7 +37,7 @@ describe('CRUD testing', () => {
       .end((err, res) => {
         expect(err).to.eql(null);
         expect(res).to.have.status(200);
-        expect(res.body[0].phoneNumber).to.eql(this.newVote.phoneNumber);
+        expect(res.body[0].phoneNumber).to.eql(this.newUser.phoneNumber);
         done();
       });
   });
