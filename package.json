@@ -35,6 +35,7 @@
     "basicauth-middleware": "^1.1.0",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "chalk": "^1.1.3",
     "cli-pie": "git+https://github.com/real-votes/node-cli-pie.git",
     "debug": "^2.2.0",
     "eventsource": "^0.2.1",

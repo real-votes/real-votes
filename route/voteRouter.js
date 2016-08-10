@@ -7,6 +7,7 @@ const ExpressSSE = require('express-sse');
 
 const Poll = require('../model/poll');
 const User = require('../model/user');
+const auth = require('../lib/auth');
 
 const voteRouter = new express.Router();
 const sse = new ExpressSSE();
@@ -113,6 +114,21 @@ voteRouter.get('/tally', (req, res, next) => {
 });
 
 voteRouter.get('/tally/stream', sse.init);
+
+voteRouter.delete('/', auth, (req, res, next) => {
+  User.remove({})
+  .then(() => {
+    res.json({ message: 'All Votes deleted' });
+  })
+  .catch(err => next(err));
+});
+
+voteRouter.get('/', auth, (req, res, next) => {
+  User.find({}, (err, votes) => {
+    if (err) return next(err);
+    return res.json(votes);
+  });
+});
 
 // Send a heartbeat every second to keep heroku from timing out
 setInterval(() => sse.send('heartbeat'), 1000);
