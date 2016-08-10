@@ -69,7 +69,6 @@ voteRouter.get('/sms_callback', (req, res, next) => {
   .then((poll) => {
     if (!poll) {
       return twilioRespond('No poll is currently in progress', res);
-      // return next(httpError(404, 'no poll currently in progress'));
     }
 
     const activePollId = poll._id;
@@ -141,10 +140,9 @@ voteRouter.delete('/', auth, (req, res, next) => {
 });
 
 voteRouter.get('/', auth, (req, res, next) => {
-  User.find({}, (err, votes) => {
-    if (err) return next(err);
-    return res.json(votes);
-  });
+  User.find({})
+  .then(votes => res.json(votes))
+  .catch(err => next(err));
 });
 
 // Send a heartbeat every second to keep heroku from timing out
