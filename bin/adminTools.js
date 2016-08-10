@@ -28,6 +28,16 @@ console.log(title('Hello, welcome to the real-votes admin console'));
 
 const cli = vorpal();
 
+function inputVer(promptInput) {
+  let badInput = false;
+  Object.keys(promptInput).forEach((key) => {
+    if (promptInput[key] === '') {
+      badInput = true;
+    }
+  });
+  return badInput;
+}
+
 cli
   .command('addPoll', 'Creates a new poll')
   .action(function(args, callback) {
@@ -48,6 +58,12 @@ cli
         message: blue('Please enter your max votes for this poll: '),
       },
     ], (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: PollBaseUrlTest,
         json: {
@@ -61,11 +77,17 @@ cli
         },
       };
 
-      request.post(options, (err) => {
+      request.post(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully added poll!'));
         callback();
       });
@@ -87,6 +109,12 @@ cli
         message: blue('Please enter the status you want to set: '),
       },
     ], (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: PollBaseUrlTest + answers.id,
         json: { pollStatus: answers.pollStatus },
@@ -96,11 +124,17 @@ cli
         },
       };
 
-      request.put(options, (err) => {
+      request.put(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully updated poll!'));
         callback();
       });
@@ -117,6 +151,12 @@ cli
           message: blue('Please enter the polls ID you want to delete: '),
         },
       ], (answers) => {
+        const input = inputVer(answers);
+        if (input === true) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         const options = {
           url: PollBaseUrlTest + answers.id,
           auth: {
@@ -125,11 +165,17 @@ cli
           },
         };
 
-        request.delete(options, (err) => {
+        request.delete(options, (err, res) => {
           if (err) {
             this.log(err);
             return callback();
           }
+
+          if (res.statusCode !== 200) {
+            this.log(red('Invalid input, exiting command...'));
+            return callback();
+          }
+
           this.log(green('Successfully deleted poll!'));
           callback();
         });
@@ -156,6 +202,12 @@ cli
         message: blue('Please enter your vote: '),
       },
     ], (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const user = new User();
       user.phoneNumber = answers.userNumber;
       user.pollId = answers.pollId;
@@ -180,6 +232,12 @@ cli
         this.log(err);
         return callback();
       }
+
+      if (res.statusCode !== 200) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
     });
@@ -200,6 +258,12 @@ cli
         this.log(err);
         return callback();
       }
+
+      if (res.statusCode !== 200) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
     });
@@ -214,6 +278,12 @@ cli
       message: red('Are you sure you want to input all polls, \'y\' or \'n\': '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       if (answers.confirmation.toLowerCase() === 'n') return callback();
       const options = {
         url: PollBaseUrlTest,
@@ -223,11 +293,17 @@ cli
         },
       };
 
-      request.delete(options, (err) => {
+      request.delete(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully deleted all polls.'));
         callback();
       });
@@ -243,6 +319,12 @@ cli
       message: red('Are you sure you want to delete all votes, \'y\' or \'n\': '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       if (answers.confirmation.toLowerCase() === 'n') return callback();
       const options = {
         url: VoteBaseUrlTest,
@@ -252,11 +334,17 @@ cli
         },
       };
 
-      request.delete(options, (err) => {
+      request.delete(options, (err, res) => {
         if (err) {
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(green('Successfully deleted all votes.'));
         callback();
       });
@@ -272,6 +360,12 @@ cli
       message: blue('Enter the ID of the Poll you want to view votes for: '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: `${PollBaseUrlTest}${answers.pollId}/users`,
         auth: {
@@ -285,6 +379,12 @@ cli
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(prettyjson.render(JSON.parse(body)));
         callback();
       });
@@ -300,6 +400,12 @@ cli
       message: blue('Enter the ID of the Poll you want to delete all votes for: '),
     },
     (answers) => {
+      const input = inputVer(answers);
+      if (input === true) {
+        this.log(red('Invalid input, exiting command...'));
+        return callback();
+      }
+
       const options = {
         url: `${PollBaseUrlTest}${answers.pollId}/users`,
         auth: {
@@ -313,6 +419,12 @@ cli
           this.log(err);
           return callback();
         }
+
+        if (res.statusCode !== 200) {
+          this.log(red('Invalid input, exiting command...'));
+          return callback();
+        }
+
         this.log(prettyjson.render(JSON.parse(body)));
         callback();
       });
@@ -353,7 +465,7 @@ cli
       }
 
       if (res.statusCode === 404) {
-        this.log(chalk.red.bold('There is no poll currently in progress'));
+        this.log(red('There is no poll currently in progress'));
         return callback();
       }
 
@@ -378,12 +490,11 @@ cli
 
       if (res.statusCode === 404) {
         this.log(chalk.red.bold('There is no poll currently in progress'));
-        return callback();
+      } else {
+        const results = JSON.parse(body);
+        process.stdout.write('\u001bc');
+        this.log(renderTally(results));
       }
-
-      const results = JSON.parse(body);
-      process.stdout.write('\u001bc');
-      this.log(renderTally(results));
 
       // Subscribe to tally updates
       const es = new EventSource(`${VoteBaseUrlTest}tally/stream`);
