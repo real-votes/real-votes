@@ -36,8 +36,17 @@ https://www.npmjs.com/package/real-votes-admin
 
 4. 'help' will print out a list of commands you can use to create, edit and delete polls. As well as displaying existing polls and their results in real time.
 
-
-
+`help` --- Provides help for a given command
+`exit`  --- Exits application
+`addPoll` --- Creates a new poll
+`updatePollStatus` --- Updates the status of a poll
+`deletePoll` --- Deletes one poll
+`viewAllPolls` --- Shows all polls
+`viewAllVotes` --- Shows all votes
+`deleteAllPolls` --- Deletes all polls
+`deleteAllVotes` --- Deletes all votes
+`showResults` --- Show the results of the current poll
+`showRealTimeResults` --- Show the results of the current poll in real time
 
 #Tests
 
