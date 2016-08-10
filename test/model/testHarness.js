@@ -1,5 +1,6 @@
 require('./testServer');
 require('./routerTests');
+require('./voteTests');
 
 const mongoose = require('mongoose');
 

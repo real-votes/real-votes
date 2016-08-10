@@ -36,6 +36,17 @@ https://www.npmjs.com/package/real-votes-admin
 
 4. 'help' will print out a list of commands you can use to create, edit and delete polls. As well as displaying existing polls and their results in real time.
 
+`help` --- Provides help for a given command
+`exit`  --- Exits application
+`addPoll` --- Creates a new poll
+`updatePollStatus` --- Updates the status of a poll
+`deletePoll` --- Deletes one poll
+`viewAllPolls` --- Shows all polls
+`viewAllVotes` --- Shows all votes
+`deleteAllPolls` --- Deletes all polls
+`deleteAllVotes` --- Deletes all votes
+`showResults` --- Show the results of the current poll
+`showRealTimeResults` --- Show the results of the current poll in real time
 
 #Tests
 
@@ -43,14 +54,18 @@ https://www.npmjs.com/package/real-votes-admin
 
   `git clone`
 
-2. Enter the following command to install dependencies:
+2. Make a DB directory for mongo in the project root:
+
+  `mkdir db`
+
+3. Enter the following command to install dependencies:
 
   `npm i`
 
-3. Start mongod:
+4. Start mongod:
 
   `mongod --dbpath db`
 
-4. Run a gulp test on the command line in the root:
+5. Run a gulp test on the command line in the root:
 
   `gulp test`

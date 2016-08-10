@@ -16,10 +16,7 @@ require('./testHarness');
 describe('CRUD testing', () => {
   let id = '';
   before(function(done) {
-    this.newPoll = new Poll({
-      pollName: 'test poll',
-      pollStatus: 'in_progress',
-    });
+    this.newPoll = new Poll({ pollName: 'test poll' });
     id = this.newPoll._id;
     console.log(this.newPoll);
     done();
@@ -51,15 +48,15 @@ describe('CRUD testing', () => {
     });
   });
 
-  it('should not post with a bad username and password', () => {
+  it('should not post with a bad username and password', (done) => {
     request(server)
     .post('/api/poll')
     .auth('hax0r', 'imahaxu')
     .send({ pollName: 'fail poll' })
     .end((err, res) => {
-      expect(err).to.eql(true);
-      expect(res).to.eql(400);
-      expect(res.body).to.eql(undefined);
+      expect(res).to.have.status(401);
+      expect(res.body).to.eql({});
+      done();
     });
   });
 
@@ -74,6 +71,7 @@ describe('CRUD testing', () => {
     });
   });
 
+
   it('should put/update the poll status', function(done) {
     request(server)
       .put(`/api/poll/${id}`)
@@ -81,24 +79,35 @@ describe('CRUD testing', () => {
       .send({ pollStatus: 'in_progress' })
       .end((err, res) => {
         console.log(this.newPoll.pollStatus);
+        console.log(res.body);
         expect(err).to.eql(null);
         expect(res).to.have.status(200);
-        expect('in_progress').to.eql(this.newPoll.pollStatus);
+        expect(this.newPoll.pollStatus).to.eql('in_progress');
         done();
       });
   });
 
-  it('should delete a poll with specific id', () => {
+  it('should delete all polls', (done) => {
     request(server)
-      .get('/api/poll')
-      .end(() => {
-        request(server)
-          .delete('/api/poll')
-          .auth('admin', 'testpass')
-          .end((err, res) => {
-            expect(err).to.eql(null);
-            expect(res).to.have.status(200);
-          });
+      .delete('/api/poll')
+      .auth('admin', 'testpass')
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.have.status(200);
+        expect(res.body).to.eql({ message: 'All Polls deleted' });
+        done();
+      });
+  });
+
+  it('should delete a poll with specific id', (done) => {
+    request(server)
+      .delete(`/api/poll/${id}`)
+      .auth('admin', 'testpass')
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.have.status(200);
+        expect(res.body).to.eql({});
+        done();
       });
   });
 });
