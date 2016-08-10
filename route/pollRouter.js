@@ -19,18 +19,16 @@ pollRouter.post('/', jsonParser, auth, (req, res, next) => {
     return next(httpError(400, 'must set to poll status to \'not_started\''));
   }
 
-  return newPoll.save((err, poll) => {
-    if (err) return next(err);
-    return res.json(poll);
-  });
+  return newPoll.save()
+  .then(poll => res.json(poll))
+  .catch(err => next(err));
 });
 
 pollRouter.get('/:id', (req, res, next) => {
   const _id = req.params.id;
-  Poll.findOne({ _id }, (err, poll) => {
-    if (err) return next(err);
-    return res.json(poll);
-  });
+  Poll.findOne({ _id })
+  .then(poll => res.json(poll))
+  .catch(err => next(err));
 });
 
 pollRouter.get('/', (req, res, next) => {
