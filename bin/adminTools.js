@@ -8,17 +8,20 @@ const Pie = require('cli-pie');
 const mongoose = require('mongoose');
 const randomcolor = require('randomcolor');
 const EventSource = require('eventsource');
+const chalk = require('chalk');
+
 
 const User = require('../model/user');
 
-// const PollBaseUrl = 'https://real-votes.herokuapp.com/api/poll';
 const PollBaseUrlTest = 'http://localhost:3141/api/poll/';
 const VoteBaseUrlTest = 'http://localhost:3141/api/vote/';
+
+const highlight = chalk.bold.green;
 
 const mongoServer = process.env.MONGODB_URI || 'mongodb://localhost/pollDatabase';
 mongoose.connect(mongoServer);
 
-console.log('Hello welcome to the real-votes admin console.');
+console.log(highlight('Hello welcome to the real-votes admin console.'));
 
 const cli = vorpal();
 
@@ -29,7 +32,7 @@ cli
       {
         type: 'input',
         name: 'pollName',
-        message: 'What would you like to name your poll? ',
+        message: highlight('What would you like to name your poll? '),
       },
       {
         type: 'input',
@@ -169,6 +172,84 @@ cli
       }
       this.log(prettyjson.render(JSON.parse(body)));
       callback();
+    });
+  });
+
+cli
+  .command('viewAllVotes', 'Shows all votes')
+  .action(function(args, callback) {
+    const options = {
+      url: VoteBaseUrlTest,
+      auth: {
+        username: 'admin',
+        password: process.env.PASSWORD,
+      },
+    };
+    request.get(options, (err, res, body) => {
+      if (err) {
+        this.log(err);
+        return callback();
+      }
+      this.log(prettyjson.render(JSON.parse(body)));
+      callback();
+    });
+  });
+
+cli
+  .command('deleteAllPolls', 'Deletes all polls')
+  .action(function(args, callback) {
+    this.prompt({
+      type: 'input',
+      name: 'confirmation',
+      message: 'Are you sure you want to input all polls, \'y\' or \'n\': ',
+    },
+    (answers) => {
+      if (answers.confirmation.toLowerCase() === 'n') return callback();
+      const options = {
+        url: PollBaseUrlTest,
+        auth: {
+          username: 'admin',
+          password: process.env.PASSWORD,
+        },
+      };
+
+      request.delete(options, (err) => {
+        if (err) {
+          this.log(err);
+          return callback();
+        }
+        this.log('Success');
+        callback();
+      });
+    });
+  });
+
+cli
+  .command('deleteAllVotes', 'Deletes all votes')
+  .action(function(args, callback) {
+    this.prompt({
+      type: 'input',
+      name: 'confirmation',
+      message: 'Are you sure you want to delete all votes, \'y\' or \'n\': ',
+    },
+    (answers) => {
+      if (answers.confirmation.toLowerCase() === 'n') return callback();
+      const options = {
+        url: VoteBaseUrlTest,
+        auth: {
+          username: 'admin',
+          password: process.env.PASSWORD,
+        },
+      };
+
+      request.delete(options, (err) => {
+        if (err) {
+          this.log(err);
+          return callback();
+        }
+        this.log('Success');
+        callback();
+      });
     });
   });
 

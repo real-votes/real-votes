@@ -99,3 +99,11 @@ pollRouter.delete('/:id', auth, (req, res, next) => {
   })
   .catch(err => next(err));
 });
+
+pollRouter.delete('/', auth, (req, res, next) => {
+  Poll.remove({})
+  .then(() => {
+    res.json({ message: 'All Polls deleted' });
+  })
+  .catch(err => next(err));
+});
