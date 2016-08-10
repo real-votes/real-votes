@@ -253,6 +253,62 @@ cli
     });
   });
 
+cli
+  .command('viewOnePollVotes', 'View votes for a single poll.')
+  .action(function(args, callback) {
+    this.prompt({
+      type: 'input',
+      name: 'pollId',
+      message: 'Enter the ID of the Poll you want to view votes for: ',
+    },
+    (answers) => {
+      const options = {
+        url: `${PollBaseUrlTest}${answers.pollId}/users`,
+        auth: {
+          username: 'admin',
+          password: process.env.PASSWORD,
+        },
+      };
+
+      request.get(options, (err, res, body) => {
+        if (err) {
+          this.log(err);
+          return callback();
+        }
+        this.log(prettyjson.render(JSON.parse(body)));
+        callback();
+      });
+    });
+  });
+
+cli
+  .command('deleteOnePollVotes', 'Delete votes for a single poll.')
+  .action(function(args, callback) {
+    this.prompt({
+      type: 'input',
+      name: 'pollId',
+      message: 'Enter the ID of the Poll you want to delete all votes for: ',
+    },
+    (answers) => {
+      const options = {
+        url: `${PollBaseUrlTest}${answers.pollId}/users`,
+        auth: {
+          username: 'admin',
+          password: process.env.PASSWORD,
+        },
+      };
+
+      request.delete(options, (err, res, body) => {
+        if (err) {
+          this.log(err);
+          return callback();
+        }
+        this.log(prettyjson.render(JSON.parse(body)));
+        callback();
+      });
+    });
+  });
+
 function renderTally(results) {
   const chart = new Pie(10, [], { legend: true });
 

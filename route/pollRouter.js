@@ -5,7 +5,6 @@ const express = require('express');
 const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
-const User = require('../model/user');
 const auth = require('../lib/auth');
 
 const pollVoteRouter = require('./pollVoteRouter');
