@@ -16,11 +16,9 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@giodamelio/eslint-config": "^0.1.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
-    "eslint": "^3.1.1",
-    "eslint-config-airbnb-base": "^5.0.0",
-    "eslint-plugin-import": "^1.12.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
     "gulp-istanbul": "^1.0.0",

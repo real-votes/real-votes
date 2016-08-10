@@ -1,3 +1,4 @@
+/* eslint import/no-extraneous-dependencies: "off" */
 const fs = require('fs');
 
 const gulp = require('gulp');
