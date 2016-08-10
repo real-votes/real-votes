@@ -256,6 +256,10 @@ cli
 function renderTally(results) {
   const chart = new Pie(10, [], { legend: true });
 
+  if (Object.keys(results.votes).length === 0) {
+    return 'No votes have been cast';
+  }
+
   const colorPalette = randomcolor({
     format: 'rgbArray',
     seed: results.seed,
@@ -281,6 +285,12 @@ cli
         this.log(err);
         return callback();
       }
+
+      if (res.statusCode === 404) {
+        this.log(chalk.red.bold('There is no poll currently in progress'));
+        return callback();
+      }
+
       const results = JSON.parse(body);
       this.log(renderTally(results));
       callback();
@@ -299,22 +309,28 @@ cli
         this.log(err);
         return callback();
       }
+
+      if (res.statusCode === 404) {
+        this.log(chalk.red.bold('There is no poll currently in progress'));
+        return callback();
+      }
+
       const results = JSON.parse(body);
       process.stdout.write('\u001bc');
       this.log(renderTally(results));
+
+      // Subscribe to tally updates
+      const es = new EventSource(`${VoteBaseUrlTest}tally/stream`);
+
+      es.addEventListener('message', (e) => {
+        const data = JSON.parse(e.data);
+        if (data === 'heartbeat') return;
+
+        // Clear the console
+        process.stdout.write('\u001bc');
+        this.log(renderTally(JSON.parse(data)));
+      }, false);
     });
-
-    // Subscribe to tally updates
-    const es = new EventSource(`${VoteBaseUrlTest}tally/stream`);
-
-    es.addEventListener('message', (e) => {
-      const data = JSON.parse(e.data);
-      if (data === 'heartbeat') return;
-
-      // Clear the console
-      process.stdout.write('\u001bc');
-      this.log(renderTally(JSON.parse(data)));
-    }, false);
   });
 
 cli

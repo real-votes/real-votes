@@ -4,6 +4,7 @@ const express = require('express');
 const twilio = require('twilio');
 const debug = require('debug')('rv:vote-router');
 const ExpressSSE = require('express-sse');
+const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
 const User = require('../model/user');
@@ -24,25 +25,38 @@ function twilioRespond(message, res) {
 
 function tallyVotes() {
   return Poll.findOne({ pollStatus: 'in_progress' })
-    .then((poll) => (
-      User.find({ pollId: poll._id })
-        .then((users) => ({
-          seed: poll._id,
-          choices: poll.choices,
-          votes: users
-            .map((user) => user.vote) // Get just the votes
-            .reduce((a, b) => a.concat(b)) // Flatten the array
-            // Return a object with the individual vote counts
-            .reduce((acc, curr) => {
-              if (typeof acc[curr] === 'undefined') {
-                acc[curr] = 1;
-              } else {
-                acc[curr] += 1;
-              }
-              return acc;
-            }, {}),
-        }))
-    ));
+    .then((poll) => {
+      if (!poll) {
+        throw httpError(404, 'No poll currently in progress');
+      }
+
+      return User.find({ pollId: poll._id })
+        .then((users) => {
+          let userCount;
+          if (users.length === 0) {
+            userCount = {};
+          } else {
+            userCount = users
+              .map((user) => user.vote) // Get just the votes
+              .reduce((a, b) => a.concat(b)) // Flatten the array
+              // Return a object with the individual vote counts
+              .reduce((acc, curr) => {
+                if (typeof acc[curr] === 'undefined') {
+                  acc[curr] = 1;
+                } else {
+                  acc[curr] += 1;
+                }
+                return acc;
+              }, {});
+          }
+
+          return {
+            seed: poll._id,
+            choices: poll.choices,
+            votes: userCount,
+          };
+        });
+    });
 }
 
 function getPollInfo(poll) {
@@ -109,7 +123,10 @@ voteRouter.get('/sms_callback', (req, res, next) => {
 voteRouter.get('/tally', (req, res, next) => {
   debug('Tallying results');
   tallyVotes()
-    .then((tally) => res.json(tally))
+    .then((tally) => {
+      console.log(tally);
+      res.json(tally)
+    })
     .catch((err) => next(err));
 });
 
