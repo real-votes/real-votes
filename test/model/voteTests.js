@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 const request = chai.request;
-process.env.MONGODB_URI = 'mongodb://localhost/votes-real-test';
+process.env.MONGODB_URI = 'mongodb://localhost/vote-real-test';
 process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
 const User = require('../../model/user');

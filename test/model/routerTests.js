@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 const request = chai.request;
-process.env.MONGODB_URI = 'mongodb://localhost/votes-real-test';
+process.env.MONGODB_URI = 'mongodb://localhost/vote-real-test';
 process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
 const Poll = require('../../model/poll');
@@ -20,12 +20,9 @@ describe('CRUD testing', () => {
     .then((poll) => {
       console.log(poll);
       this.id = poll._id;
-    });
-    done();
-
-    // id = this.newPoll._id;
-    // console.log(this.newPoll);
-    // done();
+      done();
+    })
+    .catch((err) => console.log(err));
   });
 
   afterEach((done) => {
@@ -77,7 +74,6 @@ describe('CRUD testing', () => {
     });
   });
 
-
   it('should put/update the poll status', function(done) {
     console.log(this.id);
     request(server)
@@ -92,7 +88,6 @@ describe('CRUD testing', () => {
       });
   });
 
-
   it('should delete a poll with specific id', function(done) {
     console.log(this.id);
     request(server)
@@ -105,7 +100,7 @@ describe('CRUD testing', () => {
         done();
       });
   });
-  
+
   it('should delete all polls', function(done) {
     request(server)
     .delete('/api/poll')
