@@ -378,12 +378,11 @@ cli
 
       if (res.statusCode === 404) {
         this.log(chalk.red.bold('There is no poll currently in progress'));
-        return callback();
+      } else {
+        const results = JSON.parse(body);
+        process.stdout.write('\u001bc');
+        this.log(renderTally(results));
       }
-
-      const results = JSON.parse(body);
-      process.stdout.write('\u001bc');
-      this.log(renderTally(results));
 
       // Subscribe to tally updates
       const es = new EventSource(`${VoteBaseUrlTest}tally/stream`);
