@@ -5,6 +5,7 @@ const express = require('express');
 const httpError = require('http-errors');
 
 const Poll = require('../model/poll');
+const User = require('../model/user');
 const auth = require('../lib/auth');
 
 const pollRouter = module.exports = express.Router(); // eslint-disable-line
@@ -21,6 +22,21 @@ pollRouter.post('/', jsonParser, auth, (req, res, next) => {
     if (err) return next(err);
     return res.json(poll);
   });
+});
+
+pollRouter.get('/:pollId/users', (req, res, next) => {
+  const poll = req.params.pollId;
+  if (!poll) {
+    return next(httpError(404, 'no poll id specified'));
+  }
+  User.find({ pollId: poll })
+  .then((users) => {
+    if (users.length < 1) {
+      return next(httpError(404, 'no users found'));
+    }
+    res.json(users);
+  })
+  .catch(err => next(err));
 });
 
 pollRouter.get('/:id', (req, res, next) => {
@@ -47,17 +63,6 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
   if (!req.body) {
     return next(httpError(400, 'no body'));
   }
-
-  console.log(req.body);
-
-  // return Poll.findOne({ pollStatus: 'in_progress' })
-  // .then((poll) => {
-  //   if (poll) {
-  //     return next(httpError(400, 'a poll is already in progress'));
-  //   }
-  // })
-  // .catch(err => next(err));
-
 
   if (req.body.pollStatus === 'in_progress') {
     return Poll.find({ pollStatus: 'in_progress' })
