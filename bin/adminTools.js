@@ -16,12 +16,15 @@ const User = require('../model/user');
 const PollBaseUrlTest = 'http://localhost:3141/api/poll/';
 const VoteBaseUrlTest = 'http://localhost:3141/api/vote/';
 
-const highlight = chalk.bold.green;
+const green = chalk.bold.green;
+const red = chalk.bold.red;
+const blue = chalk.bold.blue;
+const title = chalk.bold.underline.yellow;
 
 const mongoServer = process.env.MONGODB_URI || 'mongodb://localhost/pollDatabase';
 mongoose.connect(mongoServer);
 
-console.log(highlight('Hello welcome to the real-votes admin console.'));
+console.log(title('Hello, welcome to the real-votes admin console'));
 
 const cli = vorpal();
 
@@ -32,17 +35,17 @@ cli
       {
         type: 'input',
         name: 'pollName',
-        message: highlight('What would you like to name your poll? '),
+        message: blue('What would you like to name your poll? '),
       },
       {
         type: 'input',
         name: 'choices',
-        message: 'Please enter your choices for this poll: ',
+        message: blue('Please enter your choices for this poll: '),
       },
       {
         type: 'input',
         name: 'votesPerUser',
-        message: 'Please enter your max votes for this poll: ',
+        message: blue('Please enter your max votes for this poll: '),
       },
     ], (answers) => {
       const options = {
@@ -63,7 +66,7 @@ cli
           this.log(err);
           return callback();
         }
-        this.log('Success!');
+        this.log(green('Successfully added poll!'));
         callback();
       });
     });
@@ -76,12 +79,12 @@ cli
       {
         type: 'input',
         name: 'id',
-        message: 'Please enter the polls id you want to update: ',
+        message: blue('Please enter the polls id you want to update: '),
       },
       {
         type: 'input',
         name: 'pollStatus',
-        message: 'Please enter the status you want to set: ',
+        message: blue('Please enter the status you want to set: '),
       },
     ], (answers) => {
       const options = {
@@ -98,7 +101,7 @@ cli
           this.log(err);
           return callback();
         }
-        this.log('Success!');
+        this.log(green('Successfully updated poll!'));
         callback();
       });
     });
@@ -111,7 +114,7 @@ cli
         {
           type: 'input',
           name: 'id',
-          message: 'Please enter the polls id you want to delete: ',
+          message: blue('Please enter the polls ID you want to delete: '),
         },
       ], (answers) => {
         const options = {
@@ -127,7 +130,7 @@ cli
             this.log(err);
             return callback();
           }
-          this.log('Success!');
+          this.log(green('Successfully deleted poll!'));
           callback();
         });
       });
@@ -140,25 +143,32 @@ cli
       {
         type: 'input',
         name: 'pollId',
-        message: 'Please enter the polls id you want to update: ',
+        message: blue('Please enter the polls id you want to add a vote to: '),
       },
       {
         type: 'input',
         name: 'userNumber',
-        message: 'Please enter the phone number you want to use: ',
+        message: blue('Please enter the phone number you want to use: '),
       },
       {
         type: 'input',
         name: 'vote',
-        message: 'Please enter your vote: ',
+        message: blue('Please enter your vote: '),
       },
     ], (answers) => {
       const user = new User();
       user.phoneNumber = answers.userNumber;
       user.pollId = answers.pollId;
       user.vote = [answers.vote];
-      user.save();
-      callback();
+      user.save()
+      .then(() => {
+        this.log(green('Successfully added vote'));
+        callback();
+      })
+      .catch((err) => {
+        this.log(err);
+        callback();
+      });
     });
   });
 
@@ -201,7 +211,7 @@ cli
     this.prompt({
       type: 'input',
       name: 'confirmation',
-      message: 'Are you sure you want to input all polls, \'y\' or \'n\': ',
+      message: red('Are you sure you want to input all polls, \'y\' or \'n\': '),
     },
     (answers) => {
       if (answers.confirmation.toLowerCase() === 'n') return callback();
@@ -218,7 +228,7 @@ cli
           this.log(err);
           return callback();
         }
-        this.log('Success');
+        this.log(green('Successfully deleted all polls.'));
         callback();
       });
     });
@@ -230,7 +240,7 @@ cli
     this.prompt({
       type: 'input',
       name: 'confirmation',
-      message: 'Are you sure you want to delete all votes, \'y\' or \'n\': ',
+      message: red('Are you sure you want to delete all votes, \'y\' or \'n\': '),
     },
     (answers) => {
       if (answers.confirmation.toLowerCase() === 'n') return callback();
@@ -247,7 +257,7 @@ cli
           this.log(err);
           return callback();
         }
-        this.log('Success');
+        this.log(green('Successfully deleted all votes.'));
         callback();
       });
     });
@@ -259,7 +269,7 @@ cli
     this.prompt({
       type: 'input',
       name: 'pollId',
-      message: 'Enter the ID of the Poll you want to view votes for: ',
+      message: blue('Enter the ID of the Poll you want to view votes for: '),
     },
     (answers) => {
       const options = {
@@ -287,7 +297,7 @@ cli
     this.prompt({
       type: 'input',
       name: 'pollId',
-      message: 'Enter the ID of the Poll you want to delete all votes for: ',
+      message: blue('Enter the ID of the Poll you want to delete all votes for: '),
     },
     (answers) => {
       const options = {
