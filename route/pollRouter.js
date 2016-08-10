@@ -8,6 +8,8 @@ const Poll = require('../model/poll');
 const User = require('../model/user');
 const auth = require('../lib/auth');
 
+const pollVoteRouter = require('./pollVoteRouter');
+
 const pollRouter = module.exports = express.Router(); // eslint-disable-line
 
 pollRouter.post('/', jsonParser, auth, (req, res, next) => {
@@ -22,21 +24,6 @@ pollRouter.post('/', jsonParser, auth, (req, res, next) => {
     if (err) return next(err);
     return res.json(poll);
   });
-});
-
-pollRouter.get('/:pollId/users', (req, res, next) => {
-  const poll = req.params.pollId;
-  if (!poll) {
-    return next(httpError(404, 'no poll id specified'));
-  }
-  User.find({ pollId: poll })
-  .then((users) => {
-    if (users.length < 1) {
-      return next(httpError(404, 'no users found'));
-    }
-    res.json(users);
-  })
-  .catch(err => next(err));
 });
 
 pollRouter.get('/:id', (req, res, next) => {
@@ -112,3 +99,5 @@ pollRouter.delete('/', auth, (req, res, next) => {
   })
   .catch(err => next(err));
 });
+
+pollRouter.use('/:pollId/users', pollVoteRouter);
