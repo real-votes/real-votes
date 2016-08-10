@@ -53,7 +53,12 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
     .then((polls) => {
       if (polls.length) return next(httpError(400, 'a poll is already in progress'));
       return Poll.findByIdAndUpdate(_id, req.body, { new: true })
-      .then(poll => res.json(poll))
+      .then((poll) => {
+        if (!poll) {
+          return next(httpError(404, 'invalid ID'));
+        }
+        res.json(poll);
+      })
       .catch(err => next(err));
     });
   }
@@ -61,13 +66,21 @@ pollRouter.put('/:id', jsonParser, auth, (req, res, next) => {
   if (req.body.pollStatus === 'completed') {
     return Poll.findByIdAndUpdate(_id, req.body, { new: true })
     .then((poll) => {
+      if (!poll) {
+        return next(httpError(404, 'invalid ID'));
+      }
       res.json(poll);
     })
     .catch(err => next(err));
   }
 
   Poll.findByIdAndUpdate(_id, req.body, { new: true })
-  .then(poll => res.json(poll))
+  .then((poll) => {
+    if (!poll) {
+      return next(httpError(404, 'invalid ID'));
+    }
+    res.json(poll);
+  })
   .catch(err => next(err));
 });
 
