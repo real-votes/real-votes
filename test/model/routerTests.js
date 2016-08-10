@@ -1,6 +1,5 @@
 'use strict';
 
-const mongoose = require('mongoose');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
@@ -92,7 +91,7 @@ describe('CRUD testing', () => {
   it('should delete a poll with specific id', () => {
     request(server)
       .get('/api/poll')
-      .end((error, response) => {
+      .end(() => {
         request(server)
           .delete('/api/poll')
           .auth('admin', 'testpass')

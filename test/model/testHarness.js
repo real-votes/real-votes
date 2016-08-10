@@ -3,6 +3,6 @@ require('./routerTests');
 
 const mongoose = require('mongoose');
 
-process.on('exit', (code) => {
+process.on('exit', () => {
   mongoose.connection.db.dropDatabase(() => console.log('Database dropped!!'));
 });
