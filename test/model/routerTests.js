@@ -15,9 +15,9 @@ require('./testHarness');
 
 describe('CRUD testing', () => {
   this.id = '';
-  before(function(done) { //eslint-disable-line
+  beforeEach(function(done) { //eslint-disable-line
     new Poll({ pollName: 'test poll' }).save()
-    .then(function(poll) {
+    .then((poll) => {
       console.log(poll);
       this.id = poll._id;
     });
@@ -28,7 +28,7 @@ describe('CRUD testing', () => {
     // done();
   });
 
-  after((done) => {
+  afterEach((done) => {
     Poll.remove({});
     done();
   });
@@ -79,7 +79,7 @@ describe('CRUD testing', () => {
 
 
   it('should put/update the poll status', function(done) {
-    // console.log(this.id);
+    console.log(this.id);
     request(server)
       .put(`/api/poll/${this.id}`)
       .auth('admin', 'testpass')
@@ -92,27 +92,29 @@ describe('CRUD testing', () => {
       });
   });
 
-  it('should delete all polls', function(done) {
+
+  it('should delete a poll with specific id', function(done) {
+    console.log(this.id);
     request(server)
-      .delete('/api/poll')
+      .delete(`/api/poll/${this.id}`)
       .auth('admin', 'testpass')
       .end((err, res) => {
         expect(err).to.eql(null);
         expect(res).to.have.status(200);
-        expect(res.body).to.eql({ message: 'All Polls deleted' });
+        expect(res.body).to.eql({ message: "Poll deleted." });
         done();
       });
   });
-
-  // it('should delete a poll with specific id', function(done) {
-  //   request(server)
-  //     .delete(`/api/poll/${id}`)
-  //     .auth('admin', 'testpass')
-  //     .end((err, res) => {
-  //       expect(err).to.eql(null);
-  //       expect(res).to.have.status(200);
-  //       expect(res.body).to.eql({});
-  //       done();
-  //     });
-  // });
+  
+  it('should delete all polls', function(done) {
+    request(server)
+    .delete('/api/poll')
+    .auth('admin', 'testpass')
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      expect(res.body).to.eql({ message: 'All Polls deleted' });
+      done();
+    });
+  });
 });
