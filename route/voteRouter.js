@@ -61,7 +61,7 @@ function tallyVotes() {
 }
 
 function getPollInfo(poll) {
-  let pollInfo = `Currently running Poll:\nPoll's name: ${poll.pollName}\nChoices available: ${poll.choices.join(', ')}\nVotes allowed per user: ${poll.votesPerUser}`; // eslint-disable-line
+  let pollInfo = `Currently running Poll:\nPoll's name: ${ poll.pollName }\nChoices available: ${poll.choices.join(', ')}\nVotes allowed per user: ${ poll.votesPerUser }`; // eslint-disable-line
   return pollInfo;
 }
 
@@ -81,7 +81,7 @@ voteRouter.get('/sms_callback', textAuth, (req, res, next) => {
     }
 
     if (!poll.choices.some((choice) => choice.toLowerCase() === req.query.Body.toLowerCase())) {
-      return twilioRespond(`Please select one of these choices [${poll.choices.join(', ')}]`, res);
+      return twilioRespond(`Please select one of these choices [${ poll.choices.join(', ') }]`, res); //eslint-disable-line
     }
 
     const userNumber = req.query.From;
