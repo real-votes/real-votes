@@ -9,6 +9,7 @@ const httpError = require('http-errors');
 const Poll = require('../model/poll');
 const User = require('../model/user');
 const auth = require('../lib/auth');
+const textAuth = require('../lib/textAuthParser');
 
 const voteRouter = new express.Router();
 const sse = new ExpressSSE();
@@ -64,7 +65,7 @@ function getPollInfo(poll) {
   return pollInfo;
 }
 
-voteRouter.get('/sms_callback', (req, res, next) => {
+voteRouter.get('/sms_callback', textAuth, (req, res, next) => {
   Poll.findOne({ pollStatus: 'in_progress' })
   .then((poll) => {
     if (!poll) {
