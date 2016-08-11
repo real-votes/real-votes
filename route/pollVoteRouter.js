@@ -32,7 +32,6 @@ pollVoteRouter.delete('/', auth, findPoll(), (req, res, next) => {
   }
   User.remove({ pollId: poll })
   .then((result) => {
-    console.log(result);
     res.json({ message: `deleted ${result.result.n} user(s) associated with the poll.` });
   })
   .catch(err => next(err));
