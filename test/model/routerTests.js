@@ -19,7 +19,6 @@ describe('CRUD testing', () => {
   beforeEach(function(done) { //eslint-disable-line
     new Poll({ pollName: 'test poll' }).save()
     .then((poll) => {
-      console.log(poll);
       this.id = poll._id;
       done();
     })

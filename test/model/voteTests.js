@@ -15,7 +15,7 @@ const User = require('../../model/user');
 const harness = require('./testHarness');
 
 describe('CRUD testing', () => {
-  beforeEach(function(done) {
+  before(function(done) {
     this.newUser = new User({
       phoneNumber: '2063163233',
       vote: '1',
@@ -23,21 +23,21 @@ describe('CRUD testing', () => {
     done();
   });
 
-  afterEach((done) => {
-    harness(done);
+  after((done) => {
+    User.remove({});
     done();
   });
 
-  it('should sms callback', function(done) { //eslint-disable-line
-    request(server)
-      .get('/api/vote/sms_callback')
-      .end((err, res) => {
-        expect(err).to.eql(null);
-        expect(res).to.have.status(200);
-        expect(res.body).to.eql({});
-        done();
-      });
-  });
+  // it('should sms callback', function(done) { //eslint-disable-line
+  //   request(server)
+  //     .get('/api/vote/sms_callback')
+  //     .end((err, res) => {
+  //       expect(err).to.eql(null);
+  //       expect(res).to.have.status(200);
+  //       expect(res.body).to.eql({});
+  //       done();
+  //     });
+  // });
 
   // it('should get vote tally', function(done) {
   //   request(server)
@@ -52,14 +52,14 @@ describe('CRUD testing', () => {
 
   it('should get all votes', function(done) { //eslint-disable-line
     request(server)
-      .get('/api/vote')
-      .auth('admin', 'testpass')
-      .end((err, res) => {
-        expect(err).to.eql(null);
-        expect(res).to.have.status(200);
-        expect(res.body).to.eql([]);
-        done();
-      });
+    .get('/api/vote')
+    .auth('admin', 'testpass')
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      expect(res.body).to.eql([]);
+      done();
+    });
   });
 
   it('should delete all votes', function(done) { //eslint-disable-line
