@@ -4,7 +4,6 @@ const userSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     required: true,
-    unique: true,
   },
   pollId: { type: mongoose.Schema.ObjectId },
   vote: [String],
