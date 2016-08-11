@@ -1,7 +1,6 @@
 'use strict'; // eslint-disable-line
 
 const express = require('express');
-const twilio = require('twilio');
 const debug = require('debug')('rv:vote-router');
 const ExpressSSE = require('express-sse');
 const httpError = require('http-errors');
@@ -10,19 +9,11 @@ const Poll = require('../model/poll');
 const User = require('../model/user');
 const auth = require('../lib/auth');
 const textAuth = require('../lib/textAuthParser');
+const twilioRespond = require('../lib/twilioRespond');
 
 const voteRouter = new express.Router();
 const sse = new ExpressSSE();
 
-function twilioRespond(message, res) {
-  const response = new twilio.TwimlResponse();
-  response.message(message);
-
-  res
-  .status(200)
-  .set('Content-Type', 'application/xml')
-  .end(response.toString());
-}
 
 function tallyVotes() {
   return Poll.findOne({ pollStatus: 'in_progress' })
