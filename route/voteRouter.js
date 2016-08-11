@@ -115,7 +115,6 @@ voteRouter.get('/tally', (req, res, next) => {
   debug('Tallying results');
   tallyVotes()
     .then((tally) => {
-      console.log(tally);
       res.json(tally);
     })
     .catch((err) => next(err));
