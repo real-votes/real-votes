@@ -353,4 +353,35 @@ describe('Server CRUD testing', () => {
       done();
     });
   });
+
+  it('send text with no poll in progress', (done) => {
+    Poll.findOneAndUpdate({ pollStatus: 'in_progress' }, { pollStatus: 'completed' })
+    .then(() => {
+      request(server)
+      .get('/api/vote/sms_callback')
+      .query({
+        From: '1234567899',
+        Body: 'haha',
+      })
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.have.status(200);
+        done();
+      });
+    });
+  });
+
+  it('test sms invalid choice', (done) => {
+    request(server)
+    .get('/api/vote/sms_callback')
+    .query({
+      From: '1234567899',
+      Body: 'Not a choice',
+    })
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      done();
+    });
+  });
 });
