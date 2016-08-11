@@ -12,8 +12,6 @@ process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
 const User = require('../../model/user');
 
-const harness = require('./testHarness');
-
 describe('CRUD testing', () => {
   before(function(done) {
     this.newUser = new User({
