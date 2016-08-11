@@ -66,6 +66,7 @@ function getPollInfo(poll) {
 }
 
 voteRouter.get('/sms_callback', textAuth, (req, res, next) => {
+  console.log(req.userRole);
   Poll.findOne({ pollStatus: 'in_progress' })
   .then((poll) => {
     if (!poll) {
