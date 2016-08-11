@@ -39,7 +39,7 @@ function inputVer(promptInput) {
 }
 
 cli
-  .command('addPoll', 'Creates a new poll')
+  .command('createPoll', 'Creates a new poll')
   .action(function(args, callback) {
     this.prompt([
       {
@@ -142,13 +142,13 @@ cli
   });
 
 cli
-    .command('deletePoll', 'deletes one poll')
+    .command('destroyPoll', 'deletes one poll')
     .action(function(args, callback) {
       this.prompt([
         {
           type: 'input',
           name: 'id',
-          message: blue('Please enter the polls ID you want to delete: '),
+          message: blue('Please enter the polls ID you want to destroy: '),
         },
       ], (answers) => {
         const input = inputVer(answers);
@@ -183,13 +183,13 @@ cli
     });
 
 cli
-  .command('addTestVote', 'Adds a test vote to specified poll')
+  .command('createTestVote', 'Creates a test vote to specified poll')
   .action(function(args, callback) {
     this.prompt([
       {
         type: 'input',
         name: 'pollId',
-        message: blue('Please enter the polls id you want to add a vote to: '),
+        message: blue('Please enter the polls id you want to create a vote for: '),
       },
       {
         type: 'input',
@@ -225,7 +225,7 @@ cli
   });
 
 cli
-  .command('viewAllPolls', 'Shows all polls')
+  .command('readAllPolls', 'Reads all polls')
   .action(function(args, callback) {
     request.get(PollBaseUrlTest, (err, res, body) => {
       if (err) {
@@ -244,7 +244,7 @@ cli
   });
 
 cli
-  .command('viewAllVotes', 'Shows all votes')
+  .command('readAllVotes', 'Shows all votes')
   .action(function(args, callback) {
     const options = {
       url: VoteBaseUrlTest,
@@ -270,12 +270,12 @@ cli
   });
 
 cli
-  .command('deleteAllPolls', 'Deletes all polls')
+  .command('destroyAllPolls', 'destroyAllPolls all polls')
   .action(function(args, callback) {
     this.prompt({
       type: 'input',
       name: 'confirmation',
-      message: red('Are you sure you want to input all polls, \'y\' or \'n\': '),
+      message: red('Are you sure you want to destroy all polls, \'y\' or \'n\': '),
     },
     (answers) => {
       const input = inputVer(answers);
@@ -304,19 +304,19 @@ cli
           return callback();
         }
 
-        this.log(green('Successfully deleted all polls.'));
+        this.log(green('Successfully destroyed all polls.'));
         callback();
       });
     });
   });
 
 cli
-  .command('deleteAllVotes', 'Deletes all votes')
+  .command('destroyAllVotes', 'Destroy all votes')
   .action(function(args, callback) {
     this.prompt({
       type: 'input',
       name: 'confirmation',
-      message: red('Are you sure you want to delete all votes, \'y\' or \'n\': '),
+      message: red('Are you sure you want to destroy all votes, \'y\' or \'n\': '),
     },
     (answers) => {
       const input = inputVer(answers);
@@ -345,19 +345,19 @@ cli
           return callback();
         }
 
-        this.log(green('Successfully deleted all votes.'));
+        this.log(green('Successfully destroyed all votes.'));
         callback();
       });
     });
   });
 
 cli
-  .command('viewOnePollVotes', 'View votes for a single poll.')
+  .command('readOnePollVotes', 'Read votes for a single poll.')
   .action(function(args, callback) {
     this.prompt({
       type: 'input',
       name: 'pollId',
-      message: blue('Enter the ID of the Poll you want to view votes for: '),
+      message: blue('Enter the ID of the Poll you want to read votes for: '),
     },
     (answers) => {
       const input = inputVer(answers);
@@ -392,12 +392,12 @@ cli
   });
 
 cli
-  .command('deleteOnePollVotes', 'Delete votes for a single poll.')
+  .command('destroyOnePollVotes', 'Destroy votes for a single poll.')
   .action(function(args, callback) {
     this.prompt({
       type: 'input',
       name: 'pollId',
-      message: blue('Enter the ID of the Poll you want to delete all votes for: '),
+      message: blue('Enter the ID of the Poll you want to destroy all votes for: '),
     },
     (answers) => {
       const input = inputVer(answers);
@@ -456,7 +456,7 @@ function renderTally(results) {
 }
 
 cli
-  .command('showResults', 'Show the results of the current poll')
+  .command('readResults', 'Read the results of the current poll')
   .action(function(args, callback) {
     request.get(`${VoteBaseUrlTest}tally`, (err, res, body) => {
       if (err) {
@@ -477,8 +477,8 @@ cli
 
 cli
   .command(
-    'showRealtimeResults',
-    'Show the results of the current poll and keep them updated in real time'
+    'readRealtimeResults',
+    'Read the results of the current poll and keep them updated in real time'
   )
   .action(function(args, callback) {
     // Get the initial tally
