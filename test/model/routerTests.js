@@ -11,7 +11,7 @@ process.env.MONGODB_URI = 'mongodb://localhost/vote-real-test';
 process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
 const Poll = require('../../model/poll');
-require('./testHarness');
+const harness = require('./testHarness');
 
 describe('CRUD testing', () => {
   this.id = '';
@@ -26,7 +26,7 @@ describe('CRUD testing', () => {
   });
 
   afterEach((done) => {
-    Poll.remove({});
+    harness(done);
     done();
   });
 
