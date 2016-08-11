@@ -1,71 +1,39 @@
 ![real-votes](./resources/realVotesLogo.png)
 
-#real-votes
 ![travis-status](https://travis-ci.org/real-votes/real-votes.svg)
 
 Real time voting via SMS
 
+# Summary
 
-#Summary
-
-real-votes is a real time voting SMS voting API developed in NodeJS, utilizing ExpressJS and MongoDB The platform is hosted on Heroku and uses Twilio as a middleware to send/recieve texts.
-
-
-#Administration
-
-Administrators can use the real-votes-admin console to create and modify polls. Once a poll is set to `in_progress` users can then vote on that poll via our Twilio virtual number.
+real-votes is a real time voting service via SMS developed in NodeJS, utilizing ExpressJS and MongoDB. The service is hosted on Heroku and uses the Twilio API to send and receive texts.
 
 
-The real votes-admin-console can be found here:
+# Administration
 
-https://www.npmjs.com/package/real-votes-admin
+Administrators can use the real-votes-admin console to create and modify polls.
 
-#How to use real-votes-admin
+The real-votes-admin instructions for installation and usage can be found here [https://www.npmjs.com/package/real-votes-admin](https://www.npmjs.com/package/real-votes-admin)
 
-1. npm install the package on the command line:
 
-  `npm i -g real-votes-admin`
+# Tests
 
-2. run the package:
+1. Clone down this repository:
 
-  `realvotesadmin`
+    `git clone https://github.com/real-votes/real-votes.git`
 
-3. run the 'help' command:
+2. Make a database directory for Mongo in the project root:
 
-  `help`
+    `mkdir db`
 
-4. 'help' will print out a list of commands you can use to create, edit and delete polls. As well as displaying existing polls and their results in real time.
+3. Install NPM dependencies:
 
-`help` --- Provides help for a given command
-`exit`  --- Exits application
-`addPoll` --- Creates a new poll
-`updatePollStatus` --- Updates the status of a poll
-`deletePoll` --- Deletes one poll
-`viewAllPolls` --- Shows all polls
-`viewAllVotes` --- Shows all votes
-`deleteAllPolls` --- Deletes all polls
-`deleteAllVotes` --- Deletes all votes
-`showResults` --- Show the results of the current poll
-`showRealTimeResults` --- Show the results of the current poll in real time
+    `npm install`
 
-#Tests
+4. Start MongoDB:
 
-1. Clone down this repository on github and in the command line write:
+    `mongod --dbpath db/`
 
-  `git clone`
+5. Run the tests with Gulp:
 
-2. Make a DB directory for mongo in the project root:
-
-  `mkdir db`
-
-3. Enter the following command to install dependencies:
-
-  `npm i`
-
-4. Start mongod:
-
-  `mongod --dbpath db`
-
-5. Run a gulp test on the command line in the root:
-
-  `gulp test`
+    `gulp test`
