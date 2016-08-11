@@ -11,10 +11,10 @@ process.env.MONGODB_URI = 'mongodb://localhost/vote-real-test';
 process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
 const User = require('../../model/user');
-require('./testHarness');
+
+const harness = require('./testHarness');
 
 describe('CRUD testing', () => {
-  let id = '';
   beforeEach(function(done) {
     this.newUser = new User({
       phoneNumber: '2063163233',
@@ -24,11 +24,11 @@ describe('CRUD testing', () => {
   });
 
   afterEach((done) => {
-    User.remove({});
+    harness(done);
     done();
   });
 
-  it('should sms callback', function(done) {
+  it('should sms callback', function(done) { //eslint-disable-line
     request(server)
       .get('/api/vote/sms_callback')
       .end((err, res) => {
@@ -50,7 +50,7 @@ describe('CRUD testing', () => {
   //     });
   // });
 
-  it('should get all votes', function(done) {
+  it('should get all votes', function(done) { //eslint-disable-line
     request(server)
       .get('/api/vote')
       .auth('admin', 'testpass')
@@ -62,14 +62,14 @@ describe('CRUD testing', () => {
       });
   });
 
-  it('should delete all votes', function(done) {
+  it('should delete all votes', function(done) { //eslint-disable-line
     request(server)
       .delete('/api/vote')
       .auth('admin', 'testpass')
       .end((err, res) => {
         expect(err).to.eql(null);
         expect(res).to.have.status(200);
-        expect(res.body).to.eql({ message: 'All Votes deleted' })
+        expect(res.body).to.eql({ message: 'All Votes deleted' }) //eslint-disable-line
         done();
       });
   });

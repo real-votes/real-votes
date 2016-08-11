@@ -11,6 +11,7 @@ process.env.MONGODB_URI = 'mongodb://localhost/vote-real-test';
 process.env.PASSWORD = 'testpass';
 const server = require('../../lib/server');
 const Poll = require('../../model/poll');
+
 const harness = require('./testHarness');
 
 describe('CRUD testing', () => {
@@ -30,7 +31,7 @@ describe('CRUD testing', () => {
     done();
   });
 
-  it('should post a poll with a name and choices', function(done) {
+  it('should post a poll with a name and choices', function(done) { //eslint-disable-line
     request(server)
     .post('/api/poll')
     .auth('admin', 'testpass')
@@ -51,7 +52,7 @@ describe('CRUD testing', () => {
     });
   });
 
-  it('should not post with a bad username and password', function(done) {
+  it('should not post with a bad username and password', function(done) { //eslint-disable-line
     request(server)
     .post('/api/poll')
     .auth('hax0r', 'imahaxu')
@@ -63,7 +64,7 @@ describe('CRUD testing', () => {
     });
   });
 
-  it('should get a poll', function(done) {
+  it('should get a poll', function(done) { //eslint-disable-line
     request(server)
     .get('/api/poll')
     .end((err, res) => {
@@ -96,12 +97,12 @@ describe('CRUD testing', () => {
       .end((err, res) => {
         expect(err).to.eql(null);
         expect(res).to.have.status(200);
-        expect(res.body).to.eql({ message: "Poll deleted." });
+        expect(res.body).to.eql({ message: "Poll deleted." }); //eslint-disable-line
         done();
       });
   });
 
-  it('should delete all polls', function(done) {
+  it('should delete all polls', function(done) { //eslint-disable-line
     request(server)
     .delete('/api/poll')
     .auth('admin', 'testpass')
