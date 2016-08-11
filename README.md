@@ -1,30 +1,39 @@
 ![real-votes](./resources/realVotesLogo.png)
 
-#real-votes
 ![travis-status](https://travis-ci.org/real-votes/real-votes.svg)
 
 Real time voting via SMS
 
+# Summary
 
-#Summary
-
-real-votes is a real time voting SMS voting API developed in NodeJS, utilizing ExpressJS and MongoDB The platform is hosted on Heroku and uses Twilio as a middleware to send/recieve texts.
-
-
-#Administration
-
-Administrators can use the real-votes-admin console to create and modify polls. Once a poll is set to `in_progress` users can then vote on that poll via our Twilio virtual number.
+real-votes is a real time voting service via SMS developed in NodeJS, utilizing ExpressJS and MongoDB. The service is hosted on Heroku and uses the Twilio API to send and receive texts.
 
 
-The real votes-admin-console can be found here:
+# Administration
 
-https://www.npmjs.com/package/real-votes-admin
+Administrators can use the real-votes-admin console to create and modify polls.
+
+The real-votes-admin instructions for installation and usage can be found here [https://www.npmjs.com/package/real-votes-admin](https://www.npmjs.com/package/real-votes-admin)
 
 
-#Tests
+# Tests
 
-1. Clone down this repository.
+1. Clone down this repository:
 
-2. Enter the following command to install dependencies: `npm i`.
+    `git clone https://github.com/real-votes/real-votes.git`
 
-3. Start mongod: `mongod --dbpath db`
+2. Make a database directory for Mongo in the project root:
+
+    `mkdir db`
+
+3. Install NPM dependencies:
+
+    `npm install`
+
+4. Start MongoDB:
+
+    `mongod --dbpath db/`
+
+5. Run the tests with Gulp:
+
+    `gulp test`
