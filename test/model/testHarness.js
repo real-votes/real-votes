@@ -4,6 +4,6 @@ require('./voteTests');
 
 const mongoose = require('mongoose');
 
-process.on('exit', () => {
+module.exports = exports = (callback) => {
   mongoose.connection.db.dropDatabase(() => console.log('Database dropped!!'));
-});
+};
