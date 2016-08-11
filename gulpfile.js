@@ -53,7 +53,7 @@ gulp.task('test', ['pre-test'], () => {
   return gulp.src(testFiles, { read: false })
     .pipe(mocha({ reporter: 'spec' }))
     .pipe(istanbul.writeReports())
-    .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }))
+    .pipe(istanbul.enforceThresholds({ thresholds: { global: 60 } }))
     .once('error', () => {
       process.exit(1);
     })
