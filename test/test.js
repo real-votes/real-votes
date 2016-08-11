@@ -79,6 +79,7 @@ describe('Server CRUD testing', () => {
   beforeEach(function(done) { //eslint-disable-line
     new Poll({
       pollName: 'test poll',
+      pollStatus: 'in_progress',
       choices: ['1', '2', '3'],
     }).save()
     .then((poll) => {
@@ -147,11 +148,11 @@ describe('Server CRUD testing', () => {
     request(server)
     .put(`/api/poll/${this.id}`)
     .auth('admin', 'testpass')
-    .send({ pollStatus: 'in_progress' })
+    .send({ pollStatus: 'completed' })
     .end((err, res) => {
       expect(err).to.eql(null);
       expect(res).to.have.status(200);
-      expect(res.body.pollStatus).to.eql('in_progress');
+      expect(res.body.pollStatus).to.eql('completed');
       done();
     });
   });
@@ -200,6 +201,155 @@ describe('Server CRUD testing', () => {
       expect(err).to.eql(null);
       expect(res).to.have.status(200);
       expect(res.body.message).to.eql('deleted 1 user(s) associated with the poll.');
+      done();
+    });
+  });
+
+  it('test tally votes', function(done) { //eslint-disable-line
+    request(server)
+    .get('/api/vote/tally')
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      expect(res.body.seed).to.exist; // eslint-disable-line
+      expect(res.body.choices.length).to.eql(3);
+      expect(res.body.votes['1']).to.eql(1);
+      done();
+    });
+  });
+
+  it('tally bad request', (done) => {
+    Poll.findOneAndUpdate({ pollStatus: 'in_progress' }, { pollStatus: 'completed' })
+    .then(() => {
+      request(server)
+      .get('/api/vote/tally')
+      .end((err, res) => {
+        expect(err.message).to.eql('Not Found');
+        expect(res).to.have.status(404);
+        done();
+      });
+    });
+  });
+
+  it('tally no users', (done) => {
+    User.remove({})
+    .then(() => {
+      request(server)
+      .get('/api/vote/tally')
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.have.status(200);
+        expect(res.body.seed).to.exist; // eslint-disable-line
+        expect(res.body.choices.length).to.eql(3);
+        done();
+      });
+    });
+  });
+
+  it('delete all users', function(done) { //eslint-disable-line
+    request(server)
+    .delete('/api/vote')
+    .auth('admin', 'testpass')
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      expect(res.body.message).to.eql('All Votes deleted');
+      done();
+    });
+  });
+
+  it('get a poll by a id', function(done) {
+    request(server)
+    .get(`/api/poll/${this.id}`)
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      expect(res.body.pollName).to.eql('test poll');
+      done();
+    });
+  });
+
+  it('should put/update the poll status to in_progress', function(done) {
+    Poll.findOneAndUpdate({ pollStatus: 'in_progress' }, { pollStatus: 'completed' })
+    .then(() => {
+      request(server)
+      .put(`/api/poll/${this.id}`)
+      .auth('admin', 'testpass')
+      .send({ pollStatus: 'in_progress' })
+      .end((err, res) => {
+        expect(err).to.eql(null);
+        expect(res).to.have.status(200);
+        expect(res.body.pollStatus).to.eql('in_progress');
+        done();
+      });
+    });
+  });
+
+  it('should put/update the poll status to in_progress', function(done) {
+    request(server)
+    .put(`/api/poll/${this.id}`)
+    .auth('admin', 'testpass')
+    .send({ pollStatus: 'not_started' })
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      expect(res.body.pollStatus).to.eql('not_started');
+      done();
+    });
+  });
+
+  it('send test vote', (done) => {
+    request(server)
+    .get('/api/vote/sms_callback')
+    .query({
+      From: '1234567899',
+      Body: '1',
+    })
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      done();
+    });
+  });
+
+  it('test vote auth', (done) => {
+    request(server)
+    .get('/api/vote/sms_callback')
+    .query({
+      From: '1234567899',
+      Body: 'Verification testpass 1',
+    })
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      done();
+    });
+  });
+
+  it('test vote auth incorrect password', (done) => {
+    request(server)
+    .get('/api/vote/sms_callback')
+    .query({
+      From: '1234567899',
+      Body: 'Verification iAmNotTheRightPassword 1',
+    })
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
+      done();
+    });
+  });
+
+  it('test sms help message', (done) => {
+    request(server)
+    .get('/api/vote/sms_callback')
+    .query({
+      From: '1234567899',
+      Body: '?',
+    })
+    .end((err, res) => {
+      expect(err).to.eql(null);
+      expect(res).to.have.status(200);
       done();
     });
   });

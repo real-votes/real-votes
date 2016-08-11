@@ -8,7 +8,7 @@ const nodemon = require('gulp-nodemon');
 const istanbul = require('gulp-istanbul');
 
 const srcFiles = ['lib/**/*.js', 'model/**/*.js', 'route/**/*.js', 'gulpfile.js'];
-const testFiles = ['test/**/*.js'];
+const testFiles = ['test/test.js'];
 
 const eslintRules = JSON.parse(fs.readFileSync('./.eslintrc'));
 
